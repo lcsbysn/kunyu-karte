@@ -1,0 +1,11 @@
+# Sicherheitskritisch
+.admin_hash
+
+# Entwicklung
+__pycache__/
+*.pyc
+
+# Editor / IDE
+.vscode/
+.idea/
+*.code-workspace

@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>坤輿萬國全圖 — Interaktive Karte (1602)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/openseadragon.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0a0a;color:#e8e0d0;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* Header */
+#header{
+  position:relative;
+  padding:14px 24px;
+  background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:10;
+  text-align:center;
+}
+#header > div:first-child{display:flex;flex-direction:column;align-items:center;gap:2px}
+#header h1{font-size:22px;font-weight:500;color:#f0e8d0;letter-spacing:0.4px}
+#header p{font-size:12px;color:rgba(255,255,255,0.4);font-weight:300}
+#header-right{position:absolute;right:24px;top:50%;transform:translateY(-50%)}
+
+/* Three-dot menu */
+#menu-btn{
+  background:none;border:none;color:rgba(255,255,255,0.5);
+  font-size:20px;cursor:pointer;padding:6px 10px;border-radius:6px;
+  transition:all .2s;letter-spacing:2px;line-height:1;
+}
+#menu-btn:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8)}
+#menu-dropdown{
+  display:none;position:absolute;top:100%;right:0;margin-top:6px;
+  background:rgba(18,16,12,0.96);backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,0.08);border-radius:10px;
+  min-width:240px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,0.5);z-index:100;
+}
+#menu-dropdown.open{display:block}
+.menu-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;font-size:13px;font-weight:400;
+  color:rgba(255,255,255,0.7);cursor:pointer;
+  transition:background .15s;border:none;background:none;width:100%;text-align:left;
+  font-family:inherit;
+}
+.menu-item:hover{background:rgba(255,255,255,0.06);color:#f0e8d0}
+.menu-item svg{width:16px;height:16px;opacity:0.5;flex-shrink:0}
+.menu-sep{height:1px;background:rgba(255,255,255,0.06);margin:2px 0}
+
+/* Viewer */
+#viewer{flex:1;background:#080604;position:relative}
+
+/* Category colors */
+:root{
+  --cat-geo: 100,180,255;
+  --cat-astro: 180,130,255;
+  --cat-text: 255,180,80;
+  --cat-kartografie: 120,220,170;
+}
+
+/* Detail Spots */
+.spot{
+  border:1.5px solid rgba(255,200,60,0);
+  border-radius:4px;
+  background:rgba(255,170,0,0);
+  cursor:pointer;
+  transition:background .5s cubic-bezier(0.25,0.1,0.25,1),
+             border-color .5s cubic-bezier(0.25,0.1,0.25,1),
+             box-shadow .5s cubic-bezier(0.25,0.1,0.25,1);
+  position:relative;
+}
+.spot.circle{border-radius:50%}
+
+/* Category-specific hover colors */
+.spot.cat-geo:hover,.spot.cat-geo.active{
+  border-color:rgba(var(--cat-geo),0.6);
+  background:rgba(var(--cat-geo),0.06);
+  box-shadow:0 0 25px 6px rgba(var(--cat-geo),0.12);
+}
+.spot.cat-astro:hover,.spot.cat-astro.active{
+  border-color:rgba(var(--cat-astro),0.6);
+  background:rgba(var(--cat-astro),0.06);
+  box-shadow:0 0 25px 6px rgba(var(--cat-astro),0.12);
+}
+.spot.cat-text:hover,.spot.cat-text.active{
+  border-color:rgba(var(--cat-text),0.6);
+  background:rgba(var(--cat-text),0.06);
+  box-shadow:0 0 25px 6px rgba(var(--cat-text),0.12);
+}
+.spot.cat-kartografie:hover,.spot.cat-kartografie.active{
+  border-color:rgba(var(--cat-kartografie),0.6);
+  background:rgba(var(--cat-kartografie),0.06);
+  box-shadow:0 0 25px 6px rgba(var(--cat-kartografie),0.12);
+}
+
+.spot-num{
+  position:absolute;top:-10px;left:-10px;
+  width:20px;height:20px;
+  backdrop-filter:blur(4px);
+  border-radius:50%;
+  font-size:10px;font-weight:600;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+  opacity:0.7;transition:opacity .3s;
+}
+.spot.cat-geo .spot-num{background:rgba(var(--cat-geo),0.85)}
+.spot.cat-astro .spot-num{background:rgba(var(--cat-astro),0.85)}
+.spot.cat-text .spot-num{background:rgba(var(--cat-text),0.85)}
+.spot.cat-kartografie .spot-num{background:rgba(var(--cat-kartografie),0.85)}
+
+.spot:hover .spot-num{opacity:1}
+.spot-tip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
+  white-space:nowrap;font-size:11px;font-weight:400;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);
+  padding:6px 14px;border-radius:8px;
+  pointer-events:none;opacity:0;transition:all .25s cubic-bezier(0.25,0.1,0.25,1);
+}
+.spot.cat-geo .spot-tip{color:rgb(var(--cat-geo));border:1px solid rgba(var(--cat-geo),0.2)}
+.spot.cat-astro .spot-tip{color:rgb(var(--cat-astro));border:1px solid rgba(var(--cat-astro),0.2)}
+.spot.cat-text .spot-tip{color:rgb(var(--cat-text));border:1px solid rgba(var(--cat-text),0.2)}
+.spot.cat-kartografie .spot-tip{color:rgb(var(--cat-kartografie));border:1px solid rgba(var(--cat-kartografie),0.2)}
+
+.spot:hover .spot-tip{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Legend panel */
+#legend{
+  position:fixed;bottom:160px;left:12px;z-index:60;
+  background:rgba(12,10,6,0.92);backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,0.08);border-radius:10px;
+  padding:14px 18px;min-width:200px;
+  transform:translateY(10px);opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(0.25,0.1,0.25,1);
+}
+#legend.open{transform:translateY(0);opacity:1;pointer-events:auto}
+#legend h3{font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+.legend-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;color:rgba(255,255,255,0.7);font-weight:400}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+body.admin-mode .legend-row[contenteditable]{
+  outline:none;border:1px dashed rgba(255,200,60,0.25);border-radius:4px;padding:4px 6px;
+}
+body.admin-mode .legend-row[contenteditable]:focus{
+  border-color:rgba(255,200,60,0.5);background:rgba(255,200,60,0.04);
+}
+#legend-admin-btns{display:none;margin-top:10px;gap:6px}
+body.admin-mode #legend-admin-btns{display:flex}
+
+/* Info Panel */
+#info-panel{
+  position:fixed;top:0;right:0;
+  width:420px;height:100vh;
+  background:rgba(12,10,6,0.92);
+  backdrop-filter:blur(40px) saturate(1.2);
+  color:#e8e0d0;
+  border-left:1px solid rgba(255,255,255,0.06);
+  z-index:50;
+  transform:translateX(100%);
+  transition:transform .55s cubic-bezier(0.16,1,0.3,1);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#info-panel.open{transform:translateX(0)}
+@media(max-width:900px){
+  #info-panel{width:320px}
+}
+@media(max-width:600px){
+  #info-panel{width:100%;height:65vh;top:auto;bottom:0;
+    border-left:none;border-top:1px solid rgba(255,255,255,0.06);
+    transform:translateY(100%)}
+  #info-panel.open{transform:translateY(0)}
+  #info-img-wrap{height:70px}
+  #info-close{top:10px;right:10px;width:30px;height:30px;font-size:14px}
+  #info-body{padding:1rem 1.2rem}
+  #info-title{font-size:16px;margin-bottom:4px}
+  #info-sub{margin-bottom:1rem}
+  #info-text{font-size:13px;line-height:1.7}
+  #info-back{padding:0.8rem 1.2rem}
+}
+@media(max-width:400px){
+  #info-img-wrap{height:50px}
+  #info-panel{height:70vh}
+}
+#info-close{
+  position:absolute;top:16px;right:16px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
+  color:#e8e0d0;
+  font-size:16px;width:36px;height:36px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:2;
+}
+#info-close:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.15)}
+#info-img-wrap{
+  width:100%;height:200px;overflow:hidden;
+  background:#0a0804;position:relative;flex-shrink:0;
+}
+#info-img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .6s cubic-bezier(0.25,0.1,0.25,1);
+  filter:brightness(0.85) contrast(1.05);
+}
+#info-body{padding:1.6rem 1.8rem;overflow-y:auto;flex:1}
+#info-cat{
+  display:inline-block;font-size:10px;font-weight:500;
+  padding:3px 10px;border-radius:20px;margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+#info-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  font-size:12px;font-weight:600;
+  margin-bottom:12px;margin-left:8px;
+}
+#info-title{font-size:18px;font-weight:500;color:#f0e8d0;margin-bottom:6px;line-height:1.4}
+#info-sub{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:1.4rem;font-weight:300}
+#info-text{font-size:14px;line-height:1.9;color:rgba(255,255,255,0.7);font-weight:300}
+#info-text p{margin-bottom:.9rem}
+#info-text strong{font-weight:500;color:#e8d8b8}
+#info-text em{color:#d4b878;font-style:italic}
+
+#info-back{
+  margin-top:auto;padding:1.2rem 1.8rem;
+  border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;
+}
+#info-back button{
+  width:100%;padding:10px;
+  background:rgba(255,200,60,0.08);
+  border:1px solid rgba(255,200,60,0.2);
+  color:#ffd860;font-size:13px;font-weight:500;
+  border-radius:8px;cursor:pointer;
+  transition:all .2s;font-family:inherit;
+}
+#info-back button:hover{
+  background:rgba(255,200,60,0.15);
+  border-color:rgba(255,200,60,0.35);
+}
+
+/* Modal overlay for menu pages */
+#modal{
+  position:fixed;inset:0;z-index:80;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+#modal.open{display:flex}
+#modal-content{
+  background:rgba(18,16,12,0.97);backdrop-filter:blur(40px);
+  border:1px solid rgba(255,255,255,0.08);border-radius:14px;
+  width:560px;max-height:80vh;overflow-y:auto;
+  padding:2rem 2.2rem;position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+#modal-close{
+  position:absolute;top:16px;right:16px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
+  color:#e8e0d0;font-size:16px;width:34px;height:34px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+#modal-close:hover{background:rgba(255,255,255,0.12)}
+#modal-content h2{font-size:18px;font-weight:500;color:#f0e8d0;margin-bottom:6px}
+#modal-content .modal-sub{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:1.4rem;font-weight:300}
+#modal-content p{font-size:14px;line-height:1.85;color:rgba(255,255,255,0.7);font-weight:300;margin-bottom:.8rem}
+#modal-content strong{font-weight:500;color:#e8d8b8}
+#modal-content em{color:#d4b878}
+#modal-content h3{font-size:14px;font-weight:500;color:#f0e8d0;margin:1.2rem 0 .6rem}
+#modal-content ul{padding-left:1.2rem;margin-bottom:1rem}
+#modal-content li{font-size:13px;line-height:1.8;color:rgba(255,255,255,0.6);font-weight:300;margin-bottom:4px}
+#modal-content code{font-size:12px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;color:#d4b878}
+
+/* Chinese character hover dictionary */
+.hz{
+  cursor:help;
+  border-bottom:1px dotted rgba(255,200,60,0.3);
+  transition:border-color .2s, color .2s;
+}
+.hz:hover{border-bottom-color:rgba(255,200,60,0.7);color:#f0e8d0}
+#hz-float-tip{
+  position:fixed;
+  background:rgba(10,8,4,0.96);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,200,60,0.2);border-radius:10px;
+  padding:10px 14px;min-width:200px;max-width:280px;
+  pointer-events:none;opacity:0;
+  transition:opacity .2s cubic-bezier(0.25,0.1,0.25,1), transform .2s cubic-bezier(0.25,0.1,0.25,1);
+  z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  text-align:left;white-space:normal;
+  transform:translateY(4px);
+}
+#hz-float-tip.visible{opacity:1;transform:translateY(0)}
+.hz-char{font-size:22px;color:#f0e8d0;font-weight:500;margin-right:8px;float:left;line-height:1.3}
+.hz-pin{font-size:12px;color:#d4b878;font-weight:500;letter-spacing:0.3px}
+.hz-cls{font-size:11px;color:rgba(255,255,255,0.55);font-weight:300;margin-top:3px;line-height:1.5;clear:both}
+.hz-mod{font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;font-weight:300;font-style:italic}
+
+/* Admin mode */
+body.admin-mode #admin-bar{display:flex}
+body.admin-mode .spot{border:1.5px dashed rgba(255,200,60,0.35)!important}
+body.admin-mode #info-title[contenteditable],
+body.admin-mode #info-sub[contenteditable],
+body.admin-mode #info-text[contenteditable]{
+  outline:none;border:1px dashed rgba(255,200,60,0.25);border-radius:4px;padding:4px 6px;
+  min-height:1.5em;
+}
+body.admin-mode #info-title[contenteditable]:focus,
+body.admin-mode #info-sub[contenteditable]:focus,
+body.admin-mode #info-text[contenteditable]:focus{
+  border-color:rgba(255,200,60,0.5);background:rgba(255,200,60,0.04);
+}
+body.admin-mode #modal-body [contenteditable]{
+  outline:none;border:1px dashed rgba(255,200,60,0.25);border-radius:4px;padding:4px 6px;
+}
+body.admin-mode #modal-body [contenteditable]:focus{
+  border-color:rgba(255,200,60,0.5);background:rgba(255,200,60,0.04);
+}
+#admin-bar{
+  display:none;
+  position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:200;
+  background:rgba(255,180,0,0.12);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,200,60,0.25);border-top:none;
+  border-radius:0 0 10px 10px;padding:6px 16px;gap:10px;
+  align-items:center;font-size:12px;color:#ffd860;font-weight:500;
+}
+#admin-bar button{
+  background:rgba(255,200,60,0.1);border:1px solid rgba(255,200,60,0.3);
+  color:#ffd860;font-size:11px;padding:4px 12px;border-radius:6px;
+  cursor:pointer;font-family:inherit;font-weight:500;transition:all .2s;
+}
+#admin-bar button:hover{background:rgba(255,200,60,0.2);border-color:rgba(255,200,60,0.5)}
+#admin-bar .admin-label{
+  display:flex;align-items:center;gap:6px;margin-right:4px;
+}
+#admin-bar .admin-dot{
+  width:7px;height:7px;border-radius:50%;background:#ffd860;
+  animation:adminPulse 2s infinite;
+}
+@keyframes adminPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.admin-field-label{
+  font-size:10px;color:rgba(255,200,60,0.5);font-weight:500;
+  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;margin-top:8px;
+  display:none;
+}
+body.admin-mode .admin-field-label{display:block}
+#admin-cat-select{
+  display:none;margin:8px 0;padding:6px 10px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,200,60,0.3);
+  border-radius:6px;color:#e8e0d0;font-size:12px;font-family:inherit;
+}
+body.admin-mode #admin-cat-select{display:block}
+.admin-saved-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:rgba(40,180,80,0.9);backdrop-filter:blur(12px);
+  color:#fff;font-size:13px;font-weight:500;padding:10px 24px;
+  border-radius:20px;opacity:0;transition:all .3s;z-index:300;pointer-events:none;
+}
+.admin-saved-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Admin login dialog */
+#admin-login{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+#admin-login.open{display:flex}
+#admin-login-box{
+  background:rgba(18,16,12,0.97);backdrop-filter:blur(40px);
+  border:1px solid rgba(255,200,60,0.2);border-radius:14px;
+  padding:2rem 2.2rem;width:340px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;
+}
+#admin-login-box h3{font-size:15px;font-weight:500;color:#ffd860;margin-bottom:6px}
+#admin-login-box p{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:1.2rem;font-weight:300}
+#admin-pw{
+  width:100%;padding:10px 14px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,200,60,0.25);
+  border-radius:8px;color:#e8e0d0;font-size:14px;font-family:inherit;
+  outline:none;transition:border-color .2s;
+}
+#admin-pw:focus{border-color:rgba(255,200,60,0.5)}
+#admin-pw-btn{
+  width:100%;padding:10px;margin-top:10px;
+  background:rgba(255,200,60,0.12);border:1px solid rgba(255,200,60,0.3);
+  color:#ffd860;font-size:13px;font-weight:500;border-radius:8px;
+  cursor:pointer;font-family:inherit;transition:all .2s;
+}
+#admin-pw-btn:hover{background:rgba(255,200,60,0.2)}
+#admin-pw-error{
+  font-size:12px;color:#ff6b6b;margin-top:8px;
+  display:none;font-weight:400;
+}
+
+/* Dimming: huge box-shadow on active spot dims everything EXCEPT the spot itself */
+.spot.active{
+  z-index:2!important;
+  box-shadow:0 0 0 9999px rgba(0,0,0,0.55), 0 0 40px 10px rgba(0,0,0,0.3)!important;
+}
+
+/* Admin: add spot mode */
+#admin-draw-hint{
+  display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:200;
+  background:rgba(255,180,0,0.15);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,200,60,0.3);border-radius:20px;
+  padding:8px 20px;font-size:12px;color:#ffd860;font-weight:500;
+  white-space:nowrap;
+}
+body.admin-drawing #admin-draw-hint{display:block}
+body.admin-drawing .spot{pointer-events:none!important}
+#admin-draw-rect{
+  display:none;position:absolute;z-index:2;
+  border:2px dashed rgba(255,200,60,0.7);
+  background:rgba(255,200,60,0.08);
+  pointer-events:none;
+}
+body.admin-drawing #admin-draw-rect{display:block}
+#admin-delete-spot{
+  display:none;margin-top:8px;width:100%;padding:8px;
+  background:rgba(220,60,60,0.1);border:1px solid rgba(220,60,60,0.3);
+  color:#ff6b6b;font-size:12px;font-weight:500;border-radius:6px;
+  cursor:pointer;font-family:inherit;transition:all .2s;
+}
+#admin-delete-spot:hover{background:rgba(220,60,60,0.2);border-color:rgba(220,60,60,0.5)}
+body.admin-mode #admin-delete-spot{display:block}
+
+/* Admin: editable header */
+body.admin-mode #header h1[contenteditable],
+body.admin-mode #header p[contenteditable]{
+  outline:none;border:1px dashed rgba(255,200,60,0.25);border-radius:4px;padding:2px 6px;
+}
+body.admin-mode #header h1[contenteditable]:focus,
+body.admin-mode #header p[contenteditable]:focus{
+  border-color:rgba(255,200,60,0.5);background:rgba(255,200,60,0.04);
+}
+
+/* Admin: spot resize handles */
+.spot-resize{
+  display:none;position:absolute;width:12px;height:12px;
+  background:rgba(255,200,60,0.8);border:1px solid rgba(255,200,60,1);
+  border-radius:2px;z-index:10;
+}
+body.admin-mode .spot-resize{display:block}
+.spot-resize.nw{top:-6px;left:-6px;cursor:nw-resize}
+.spot-resize.ne{top:-6px;right:-6px;cursor:ne-resize}
+.spot-resize.sw{bottom:-6px;left:-6px;cursor:sw-resize}
+.spot-resize.se{bottom:-6px;right:-6px;cursor:se-resize}
+.spot-move{
+  display:none;position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:24px;height:24px;
+  background:rgba(255,200,60,0.7);border:1px solid rgba(255,200,60,1);
+  border-radius:50%;cursor:move;z-index:10;
+  opacity:0.6;transition:opacity .2s;
+}
+.spot-move:hover{opacity:1}
+body.admin-mode .spot-move{display:flex;align-items:center;justify-content:center}
+.spot-move svg{width:14px;height:14px;pointer-events:none}
+body.admin-mode .spot-resize,
+body.admin-mode .spot-move{pointer-events:auto!important}
+
+/* Footer */
+#footer{
+  padding:10px 24px;
+  background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;gap:16px;align-items:center;flex-shrink:0;
+  font-size:11px;color:rgba(255,255,255,0.3);z-index:10;font-weight:300;
+}
+
+/* Hide header & footer in detail view */
+body.detail-open #header{
+  transform:translateY(-100%);opacity:0;pointer-events:none;
+}
+body.detail-open #footer{
+  transform:translateY(100%);opacity:0;pointer-events:none;
+}
+#header,#footer{
+  transition:transform .5s cubic-bezier(0.16,1,0.3,1), opacity .4s;
+}
+
+/* Hint */
+#hint{
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  font-size:12px;color:rgba(255,255,255,0.45);font-weight:300;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(12px);
+  padding:8px 20px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.06);
+  pointer-events:none;z-index:5;white-space:nowrap;
+  opacity:1;transition:opacity 1.5s;
+}
+#hint.hidden{opacity:0}
+.navigator{border-radius:6px!important;border:1px solid rgba(255,255,255,0.08)!important;overflow:hidden}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <h1>坤輿萬國全圖 — Interaktive Karte (1602)</h1>
+    <p>Matteo Ricci &amp; Li Zhizao · Ming-Dynastie · Auf Befehl von Kaiser Wanli</p>
+  </div>
+  <div id="header-right">
+    <button id="menu-btn" onclick="toggleMenu()">&#x2026;</button>
+    <div id="menu-dropdown">
+      <button class="menu-item" onclick="toggleLegend();toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+        Legende ein/ausblenden
+      </button>
+      <div class="menu-sep"></div>
+      <button class="menu-item" onclick="showModal('biblio');toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Bibliografische Nachweise
+      </button>
+      <button class="menu-item" onclick="showModal('source');toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Quelle der Karte
+      </button>
+      <div class="menu-sep"></div>
+      <button class="menu-item" onclick="showModal('tech');toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Technische Umsetzung
+      </button>
+      <div class="menu-sep"></div>
+      <button class="menu-item" onclick="showModal('impressum');toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Impressum
+      </button>
+      <div class="menu-sep"></div>
+      <button class="menu-item" onclick="toggleFullscreen();toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        Vollbild
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="viewer">
+  <div id="admin-draw-rect"></div>
+  <div id="hint">Scrollen zum Zoomen · Ziehen zum Bewegen · Bereiche anklicken für Details</div>
+</div>
+<div id="admin-draw-hint">Rechteck auf der Karte ziehen, um einen neuen Bereich zu erstellen · ESC zum Abbrechen</div>
+
+<div id="legend">
+  <h3>Legende</h3>
+  <div id="legend-rows"></div>
+  <div id="legend-admin-btns">
+    <button style="flex:1;padding:4px 8px;background:rgba(255,200,60,0.1);border:1px solid rgba(255,200,60,0.3);color:#ffd860;font-size:10px;border-radius:4px;cursor:pointer;font-family:inherit" onclick="legendAddRow()">+ Kategorie</button>
+  </div>
+</div>
+
+<div id="info-panel">
+  <button id="info-close" onclick="zoomOut()">&#x2715;</button>
+  <div id="info-img-wrap">
+    <img id="info-img" src="" alt="">
+  </div>
+  <div id="info-body">
+    <div><span id="info-cat"></span><span id="info-num"></span></div>
+    <select id="admin-cat-select" onchange="adminChangeCat(this.value)"></select>
+    <div class="admin-field-label">Titel</div>
+    <div id="info-title"></div>
+    <div class="admin-field-label">Untertitel</div>
+    <div id="info-sub"></div>
+    <div class="admin-field-label">Beschreibung (HTML)</div>
+    <div id="info-text"></div>
+  </div>
+  <div id="info-back">
+    <button onclick="zoomOut()">Zur Gesamtansicht</button>
+    <button id="admin-delete-spot" onclick="adminDeleteSpot()">🗑 Bereich löschen</button>
+  </div>
+</div>
+
+<div id="modal">
+  <div id="modal-content">
+    <button id="modal-close" onclick="closeModal()">&#x2715;</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="admin-bar">
+  <div class="admin-label"><div class="admin-dot"></div>Admin-Modus</div>
+  <button onclick="adminStartDraw()">＋ Neuer Bereich</button>
+  <button onclick="adminSave()">💾 Speichern</button>
+  <button onclick="adminExport()">📥 JSON Export</button>
+  <button onclick="adminReset()">↩ Zurücksetzen</button>
+  <button onclick="toggleAdmin()">✕ Beenden</button>
+</div>
+<div class="admin-saved-toast" id="admin-toast">Gespeichert ✓</div>
+<div id="hz-float-tip"></div>
+
+<div id="admin-login">
+  <div id="admin-login-box">
+    <h3>Admin-Zugang</h3>
+    <p>Passwort eingeben, um den Bearbeitungsmodus zu aktivieren</p>
+    <input type="password" id="admin-pw" placeholder="Passwort" autocomplete="off">
+    <button id="admin-pw-btn" onclick="adminDoLogin()">Anmelden</button>
+    <div id="admin-pw-error">Falsches Passwort</div>
+  </div>
+</div>
+
+<div id="footer">
+  <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleLegend()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.4"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+    Legende
+  </div>
+  <div id="fs-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:auto" onclick="toggleFullscreen()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.4"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg>
+    Vollbild
+  </div>
+  <div style="opacity:0.3">·</div>
+  <div>OpenSeadragon + IIIF · Deep Zoom · ~45.000 x 20.000 px</div>
+</div>
+
+<script>
+const PANEL_WIDTHS = [7508, 7434, 7525, 7450, 7552, 7530];
+
+// Categories
+const CATEGORIES = {
+  geo:         { label: 'Geografie & Kontinente',    color: 'var(--cat-geo)',         colorRaw: '100,180,255' },
+  astro:       { label: 'Astronomie & Kosmologie',   color: 'var(--cat-astro)',       colorRaw: '180,130,255' },
+  text:        { label: 'Texte & Beschreibungen',    color: 'var(--cat-text)',        colorRaw: '255,180,80' },
+  kartografie: { label: 'Kartografie & Navigation',  color: 'var(--cat-kartografie)', colorRaw: '120,220,170' }
+};
+
+const SPOTS = [
+  {
+    title: '坤輿萬國全圖 — Titel der Karte',
+    sub: 'Panel 6 (rechts), oben rechts',
+    text: '<p>Die drei großen Schriftzeichen <strong>坤輿萬國全圖</strong> bedeuten „Vollständige Karte der zehntausend Länder der Erde". <em>坤</em> steht für die Erde im I-Ging, <em>輿</em> für den Träger – zusammen „das Fundament, das die Erde trägt".</p><p>Die Karte wurde 1602 auf Befehl des Wanli-Kaisers gedruckt. Matteo Ricci und der chinesische Gelehrte Li Zhizao (李之藻) erstellten sie gemeinsam als Holzblockdruck auf Maulbeerpapier – ursprünglich für einen Paravent im Kaiserpalast bestimmt.</p>',
+    panel: 5, px: 72, py: 1, pw: 28, ph: 6, shape: 'rect', cat: 'text',
+    ix: 88, iy: 4, is: 2.5
+  },
+  {
+    title: '九重天圖 — Aristotelische Himmelssphären',
+    sub: 'Panel 6 (rechts), oben links',
+    text: '<p>Das große konzentrische Kreisdiagramm heißt <strong>九重天圖</strong> (Karte der neun Himmel). Es zeigt das ptolemäisch-aristotelische Weltmodell: die Erde im Zentrum, umgeben von Sphären der vier Elemente, darüber die Himmelssphären von Mond, Merkur, Venus, Sonne, Mars, Jupiter und Saturn.</p><p>Für das chinesische Publikum war dies revolutionär. 1592 hatte Ricci eine Sonnenfinsternis präziser vorhergesagt als alle Hofastronomen – Kaiser Wanli lud ihn daraufhin nach Peking ein. Astronomie war sein Türöffner am Kaiserhof.</p>',
+    panel: 5, px: 26, py: 0, pw: 45, ph: 16, shape: 'circle', cat: 'astro',
+    ix: 48, iy: 8, is: 2.0
+  },
+  {
+    title: '天地儀 — Ekliptik und Erdkugel',
+    sub: 'Panel 6 (rechts), unten links',
+    text: '<p>Das untere Diagramm heißt <strong>天地儀</strong> (Himmel-Erde-Instrument). Es zeigt die Ekliptik – die scheinbare Sonnenbahn – und die Neigung der Erdachse. Es beweist visuell die Kugelform der Erde und erklärt Jahreszeiten und Klimazonen.</p><p>Die Kugelform der Erde war 1602 für China eine radikale Behauptung. Die traditionelle Kosmologie lehrte <em>天圓地方</em> – Himmel rund, Erde quadratisch. Ricci verpackte diese Idee in elegante Wissenschaft, kommentiert von Li Zhizao in klassischem Wenyan.</p>',
+    panel: 5, px: 28, py: 83, pw: 43, ph: 16, shape: 'circle', cat: 'astro',
+    ix: 50, iy: 91, is: 2.0
+  },
+  {
+    title: 'Widmung & Vorwort an den Kaiser',
+    sub: 'Panel 6 (rechts), rechte Textspalten',
+    text: '<p>Die langen vertikalen Textspalten bilden das <strong>Vorwort</strong> der Karte, gerichtet an Kaiser Wanli. Ricci erklärt darin westliche Kartografiegrundlagen: Längen- und Breitengrade, die Kugelform der Erde, Entfernungsmessung und die fünf Kontinente.</p><p>Er schreibt: <em>„Man verlässt die Türschwelle nicht und reist doch durch zehntausend Länder"</em> – eine Widmung im Stil klassischer chinesischer Literatur. Das zeigt, wie perfekt Ricci die kulturellen Codes seines Gastlandes beherrschte.</p>',
+    panel: 5, px: 74, py: 7, pw: 28, ph: 92, shape: 'rect', cat: 'text',
+    ix: 88, iy: 50, is: 1.4
+  },
+  {
+    title: '大明 — China im Zentrum der Welt',
+    sub: 'Panel 3 (Mitte), China und Ostasien',
+    text: '<p>Das Herzstück der Karte: <strong>大明</strong> (das Große Ming-Reich) liegt exakt in der Mitte. Diese Positionierung war Riccis diplomatisches Meisterwerk – auf europäischen Karten lag Europa im Zentrum. Ricci verschob den Nullmeridian in den Pazifik, damit China im Mittelpunkt steht.</p><p>China ist hier mit der höchsten Detaildichte dargestellt: Provinzen, Gebirge, Flüsse, Städte – alles präzise. Je weiter von China entfernt, desto spekulativer wird die Karte.</p>',
+    panel: 2, px: 4, py: 23, pw: 58, ph: 19, shape: 'rect', cat: 'geo',
+    ix: 33, iy: 32, is: 1.8
+  },
+  {
+    title: 'Beschreibungstext im Pazifik',
+    sub: 'Panel 3 (Mitte), unterer Bereich',
+    text: '<p>Der große rechteckige Textblock mitten im Pazifik enthält Riccis <strong>enzyklopädische Erläuterungen</strong> zur Geografie der Welt – Beschreibungen der Kontinente, Meere, Klimazonen und fremder Völker.</p><p>Ricci platzierte den Pazifik als größtes Meer bewusst in die Mitte. Er verschob den Nullmeridian, damit China das Zentrum der Welt bildet. Kaiser Wanli war so begeistert, dass er über 1.000 Kopien drucken ließ.</p>',
+    panel: 2, px: 5, py: 74, pw: 28, ph: 10, shape: 'circle', cat: 'text',
+    ix: 19, iy: 79, is: 2.0
+  },
+  {
+    title: '亞墨利加 — Amerika auf Chinesisch',
+    sub: 'Panel 4 & 5, rechte Kartenhälfte',
+    text: '<p>Nur 110 Jahre nach Kolumbus erscheint Amerika als eigener Kontinent. Ricci nennt ihn <strong>亞墨利加洲</strong> (Yàmòlìjiā Zhōu) – eine der ersten phonetischen Übertragungen von „America" ins Chinesische.</p><p>Die Textkästen beschreiben die Neue Welt: Schildkröten so groß wie Schilder, Menschen mit seltsamen Sitten, Gold und Silber in unvorstellbaren Mengen. Die Westküste Nordamerikas ist stark verzerrt – sie war damals kaum erforscht.</p>',
+    panel: 4, px: 5, py: 6, pw: 90, ph: 76, shape: 'rect', cat: 'geo',
+    ix: 50, iy: 44, is: 1.4
+  },
+  {
+    title: 'Beschreibung fremder Völker',
+    sub: 'Panel 2 (2. von links), Mitte rechts',
+    text: '<p>Diese Textkästen enthalten <strong>ethnografische Beschreibungen</strong> fremder Völker – eine Mischung aus portugiesischen Reiseberichten und mittelalterlichen europäischen Mythen.</p><p>Afrikas Küstenlinien sind erstaunlich akkurat – Portugal hatte den Kontinent 1498 umrundet. Das Innere bleibt spekulativ. Bemerkenswert: Der Nil entspringt hier aus zwei Binnenseen – eine Vermutung, die erst im 19. Jahrhundert bestätigt wurde!</p>',
+    panel: 1, px: 67, py: 53, pw: 32, ph: 11, shape: 'rect', cat: 'text',
+    ix: 83, iy: 58, is: 2.0
+  },
+  {
+    title: '北極圖 — Nordpolkarte',
+    sub: 'Panel 1 (ganz links), oben',
+    text: '<p>Das große Kreisdiagramm oben auf Panel 1 ist die <strong>北極圖</strong> (Nordpolkarte): eine Aufsicht auf den Nordpol mit Sternenkonstellationen und Navigationslinien.</p><p>Die Ming-Dynastie unterhielt aktive Handelsrouten in Südostasien bis zum Indischen Ozean. Diese Navigationshilfen hatten praktischen Wert für chinesische Seefahrer.</p>',
+    panel: 0, px: 3, py: 1, pw: 55, ph: 23, shape: 'circle', cat: 'kartografie',
+    ix: 30, iy: 12, is: 2.0
+  },
+  {
+    title: 'Terra Australis — Der vermutete Südkontinent',
+    sub: 'Panel 1 (ganz links), unten',
+    text: '<p>Am unteren Rand der Karte erstreckt sich <strong>墨瓦蠟泥加</strong> (Magellanica) – der hypothetische Südkontinent <em>Terra Australis</em>. Seit der Antike vermuteten Geografen eine riesige Landmasse am Südpol als Gegengewicht zu den Nordkontinenten.</p><p>Ricci zeichnet hier die Südpolkarte und Umrisse dieses imaginären Kontinents. Erst Cooks Expeditionen im 18. Jahrhundert widerlegten die Theorie endgültig – obwohl die Antarktis tatsächlich existiert, ist sie weit kleiner als die vermutete Terra Australis.</p>',
+    panel: 0, px: 3, py: 77, pw: 55, ph: 23, shape: 'circle', cat: 'geo',
+    ix: 30, iy: 88, is: 2.0
+  },
+  {
+    title: 'Kartografische Beschreibungstabelle',
+    sub: 'Panel 2 (2. von links), unten rechts',
+    text: '<p>Diese Texttafel enthält <strong>kartografische Erläuterungen</strong> – Beschreibungen der Projektionsmethoden, Maßeinheiten und Entfernungsangaben. In klassischem Wenyan verfasst, erklärt sie dem chinesischen Leser die Grundlagen westlicher Kartografie.</p><p>Li Zhizao, Riccis gelehrter Mitarbeiter, übersetzte und kommentierte diese Passagen. Er verband europäisches Wissen mit traditionellen chinesischen Konzepten – ein frühes Beispiel für interkulturellen Wissenstransfer.</p>',
+    panel: 1, px: 66, py: 75, pw: 36, ph: 11, shape: 'rect', cat: 'kartografie',
+    ix: 84, iy: 80, is: 2.0
+  },
+  {
+    title: '日月食圖 — Sonnen- und Monddiagramm',
+    sub: 'Panel 1 (ganz links), oben rechts',
+    text: '<p>Die beiden kreisförmigen Diagramme zeigen die <strong>日月食圖</strong> – den Lauf von Sonne und Mond um die Erde. Das linke Diagramm illustriert Sonnenfinsternisse, das rechte Mondfinsternisse, jeweils mit der Erde im Zentrum.</p><p>Diese Darstellungen basieren auf dem ptolemäischen Weltbild und demonstrierten den chinesischen Gelehrten die europäische Astronomie. Ricci nutzte sein astronomisches Wissen gezielt, um Zugang zum Kaiserhof zu erhalten – seine präzisen Finsternisvorhersagen beeindruckten Kaiser Wanli zutiefst.</p>',
+    panel: 0, px: 74, py: 1, pw: 25, ph: 6, shape: 'rect', cat: 'astro',
+    ix: 87, iy: 4, is: 2.5
+  }
+];
+
+const PANEL_IMGS = {};
+for (let i = 1; i <= 6; i++) PANEL_IMGS[i] = '../Website/img/panel_' + i + '.jpg';
+
+// Modal content
+const MODAL_CONTENT = {
+  biblio: {
+    title: 'Bibliografische Nachweise',
+    sub: 'Quellen und weiterführende Literatur',
+    html: '<p><em>Hier können bibliografische Nachweise ergänzt werden.</em></p><h3>Platzhalter</h3><ul><li>Nachweise werden hier eingefügt</li><li>Primärquellen</li><li>Sekundärliteratur</li><li>Digitale Ressourcen</li></ul>'
+  },
+  source: {
+    title: 'Quelle der Karte',
+    sub: 'Herkunft und Provenienz des Digitalisats',
+    html: '<p><em>Hier können Informationen zur Quelle der Karte ergänzt werden.</em></p><h3>Platzhalter</h3><ul><li>Institution / Archiv</li><li>Signatur / Inventarnummer</li><li>Digitalisierungsprojekt</li><li>Lizenzinformationen</li></ul>'
+  },
+  impressum: {
+    title: 'Impressum',
+    sub: 'Angaben gemäß § 5 TMG',
+    html: '<h3>Kontakt</h3><p>E-Mail: <strong>lucas.boysen@studium.uni-hamburg.de</strong></p><h3>Haftungshinweis</h3><p>Dieses Projekt ist eine akademische Arbeit im Rahmen des Seminars <em>Geschichte Chinas und Ostasiens</em> (SoSe 2026). Die Inhalte dienen ausschließlich Bildungszwecken. Trotz sorgfältiger Prüfung wird keine Haftung für die Richtigkeit der Informationen übernommen.</p><h3>Bildrechte</h3><p>Die Kartendarstellung basiert auf einem gemeinfreien Digitalisat der <em>Kunyu Wanguo Quantu</em> (1602). Die Bearbeitung und interaktive Aufbereitung erfolgte im Rahmen dieses Projekts.</p>'
+  },
+  tech: {
+    title: 'Technische Umsetzung',
+    sub: 'Architektur und Implementierung',
+    html: '<h3>Bildverarbeitung</h3><p>Die Karte besteht aus <strong>6 hochauflösenden TIFF-Panels</strong> (je ca. 7.500 x 20.333 px), die zu einem Gesamtbild von <strong>44.999 x 20.333 Pixel</strong> zusammengesetzt werden. Das entspricht ca. 915 Megapixel.</p><h3>Deep Zoom Image (DZI)</h3><p>Aus dem Gesamtbild wird eine <strong>DZI-Tile-Pyramide</strong> generiert: 17 Zoomstufen (Level 0-16), Kachelgröße 256x256 px mit 1px Überlappung. Insgesamt ca. 18.800 JPEG-Kacheln. Dies ermöglicht flüssiges Zoomen ohne das gesamte Bild laden zu müssen.</p><h3>Viewer</h3><p><strong>OpenSeadragon</strong> rendert die Kacheln im Browser. Der Viewer lädt nur die sichtbaren Kacheln in der aktuellen Zoomstufe – vergleichbar mit Google Maps. Smooth Zoom-Animationen mit Spring-Physics.</p><h3>Interaktive Detailbereiche</h3><p>12 Detail-Overlays werden als HTML-Elemente über dem Canvas positioniert. Koordinaten sind relativ zu den Original-Panels definiert und werden in OpenSeadragon-Viewport-Koordinaten umgerechnet. Klick löst einen Fly-to-Zoom aus.</p><h3>Stack</h3><ul><li><strong>Python + Pillow</strong> – Panel-Stitching und Tile-Generierung</li><li><strong>OpenSeadragon 4.1</strong> – Deep Zoom Viewer</li><li><strong>DZI-Format</strong> – Microsoft Deep Zoom Image Tiles</li><li><strong>Vanilla JS/CSS</strong> – UI, Overlays, Animationen</li></ul>'
+  }
+};
+
+let viewer, meta;
+let activeSpotEl = null;
+let spotRects = [];
+
+async function init() {
+  try {
+    const resp = await fetch('tiles/meta.json');
+    meta = await resp.json();
+  } catch(e) {
+    document.getElementById('hint').textContent = 'Tiles nicht gefunden';
+    return;
+  }
+
+  viewer = OpenSeadragon({
+    id: 'viewer',
+    tileSources: 'tiles/kunyu.dzi',
+    prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/',
+    showNavigationControl: false,
+    showNavigator: true,
+    navigatorPosition: 'BOTTOM_LEFT',
+    navigatorSizeRatio: 0.1,
+    navigatorBackground: '#0a0a0a',
+    navigatorBorderColor: 'rgba(255,255,255,0.08)',
+    minZoomLevel: 0.3,
+    maxZoomLevel: 15,
+    visibilityRatio: 0.3,
+    constrainDuringPan: false,
+    animationTime: 0.25,
+    springStiffness: 15,
+    zoomPerClick: 1,
+    zoomPerScroll: 1.25,
+    gestureSettingsMouse: { scrollToZoom: true, clickToZoom: false, dblClickToZoom: false },
+    gestureSettingsTouch: {
+      pinchToZoom: true,
+      zoomToRefPoint: true,
+      flickEnabled: true,
+      flickMinSpeed: 60,
+      flickMomentum: 0.4,
+      pinchRotate: false
+    },
+    crossOriginPolicy: 'Anonymous',
+    placeholderFillStyle: '#0a0804',
+    imageLoaderLimit: 4,
+    minPixelRatio: 0.5,
+    smoothTileEdgesMinZoom: 1.1,
+  });
+
+  viewer.addHandler('zoom', () => document.getElementById('hint').classList.add('hidden'));
+  viewer.addHandler('open', () => addSpotOverlays());
+}
+
+function addSpotOverlays() {
+  const totalW = meta.width, totalH = meta.height;
+  const panelOffsets = [];
+  let cumX = 0;
+  for (let i = 0; i < PANEL_WIDTHS.length; i++) { panelOffsets.push(cumX); cumX += PANEL_WIDTHS[i]; }
+
+  SPOTS.forEach((s, i) => {
+    const pOff = panelOffsets[s.panel];
+    const pW = PANEL_WIDTHS[s.panel];
+    const ar = totalH / totalW;
+    const x = (pOff + pW * s.px / 100) / totalW;
+    const y = (s.py / 100) * ar;
+    const w = (pW * s.pw / 100) / totalW;
+    const h = (s.ph / 100) * ar;
+    const rect = new OpenSeadragon.Rect(x, y, w, h);
+    spotRects.push(rect);
+
+    const el = document.createElement('div');
+    el.className = 'spot cat-' + s.cat + (s.shape === 'circle' ? ' circle' : '');
+    el.dataset.spotIdx = i;
+    el.innerHTML = '<div class="spot-num">' + (i + 1) + '</div>' +
+      '<div class="spot-tip">' + s.title.split('\u2014')[0].trim() + '</div>' +
+      '<div class="spot-resize nw" data-handle="nw"></div>' +
+      '<div class="spot-resize ne" data-handle="ne"></div>' +
+      '<div class="spot-resize sw" data-handle="sw"></div>' +
+      '<div class="spot-resize se" data-handle="se"></div>' +
+      '<div class="spot-move" data-handle="move"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg></div>';
+
+    new OpenSeadragon.MouseTracker({
+      element: el,
+      clickHandler: function(e) {
+        if (e.originalEvent && e.originalEvent.target.closest('[data-handle]')) return;
+        e.preventDefaultAction = true; spotClick(el, s, i, rect);
+      }
+    });
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-handle]')) return;
+      e.stopPropagation(); spotClick(el, s, i, rect);
+    });
+    el.style.cursor = 'pointer';
+
+    viewer.addOverlay({ element: el, location: rect });
+    adminInitHandles(el, i);
+  });
+}
+
+function spotClick(el, s, i, rect) {
+  if (activeSpotEl) activeSpotEl.classList.remove('active');
+  activeSpotEl = el;
+  el.classList.add('active');
+
+  const viewerEl = document.getElementById('viewer');
+  const viewerW = viewerEl.clientWidth;
+  const viewerH = viewerEl.clientHeight;
+  // Get actual panel width (responsive: 420px, 320px on small, or full width on mobile)
+  const panelEl = document.getElementById('info-panel');
+  const panelW = viewerW <= 600 ? 0 : Math.min(420, parseInt(getComputedStyle(panelEl).width));
+  const visibleW = viewerW - panelW;
+
+  // Padded detail bounds (viewport coords)
+  const pad = 0.12;
+  const tb = rect.clone();
+  tb.x -= tb.width * pad;
+  tb.y -= tb.height * pad;
+  tb.width *= (1 + pad * 2);
+  tb.height *= (1 + pad * 2);
+
+  // Compute zoom so tb fills the visible area (left of info panel) as large as possible.
+  // In OSD: at zoom Z, 1 viewport unit = Z * viewerW pixels.
+  // tb.width viewport units = tb.width * Z * viewerW pixels → must fit in visibleW px
+  // tb.height viewport units = tb.height * Z * viewerW pixels → must fit in viewerH px
+  const zoomForW = visibleW / (viewerW * tb.width);
+  const zoomForH = viewerH / (viewerW * tb.height);
+  const zoom = Math.min(zoomForW, zoomForH);
+
+  // Compute viewport center so tb appears centered in the visible area (left of panel).
+  // tb center should appear at pixel (visibleW/2, viewerH/2).
+  // OSD viewport center appears at pixel (viewerW/2, viewerH/2).
+  // So shift viewport center RIGHT by (viewerW/2 - visibleW/2) = panelW/2 pixels.
+  // In viewport coords: panelW / (2 * zoom * viewerW)
+  const tbCenterX = tb.x + tb.width / 2;
+  const tbCenterY = tb.y + tb.height / 2;
+  const shiftX = panelW / (2 * zoom * viewerW);
+  const vpCenter = new OpenSeadragon.Point(tbCenterX + shiftX, tbCenterY);
+
+  // Slow, cinematic fly-to
+  viewer.viewport.centerSpringX.animationTime = 1.4;
+  viewer.viewport.centerSpringY.animationTime = 1.4;
+  viewer.viewport.zoomSpring.animationTime = 1.4;
+  viewer.viewport.centerSpringX.springStiffness = 4;
+  viewer.viewport.centerSpringY.springStiffness = 4;
+  viewer.viewport.zoomSpring.springStiffness = 4;
+
+  viewer.viewport.zoomTo(zoom, null, false);
+  viewer.viewport.panTo(vpCenter, false);
+
+  setTimeout(() => openInfo(s, i), 500);
+
+  // Restore fast, snappy defaults
+  setTimeout(() => {
+    viewer.viewport.centerSpringX.animationTime = 0.25;
+    viewer.viewport.centerSpringY.animationTime = 0.25;
+    viewer.viewport.zoomSpring.animationTime = 0.25;
+    viewer.viewport.centerSpringX.springStiffness = 15;
+    viewer.viewport.centerSpringY.springStiffness = 15;
+    viewer.viewport.zoomSpring.springStiffness = 15;
+  }, 2000);
+}
+
+function openInfo(s, idx) {
+  const cat = CATEGORIES[s.cat];
+  const catEl = document.getElementById('info-cat');
+  catEl.textContent = cat.label;
+  catEl.style.background = 'rgba(' + cat.colorRaw + ',0.12)';
+  catEl.style.color = 'rgb(' + cat.colorRaw + ')';
+  catEl.style.border = '1px solid rgba(' + cat.colorRaw + ',0.25)';
+
+  const numEl = document.getElementById('info-num');
+  numEl.textContent = (idx + 1);
+  numEl.style.background = 'rgba(' + cat.colorRaw + ',0.15)';
+  numEl.style.border = '1px solid rgba(' + cat.colorRaw + ',0.3)';
+  numEl.style.color = 'rgb(' + cat.colorRaw + ')';
+
+  document.getElementById('info-title').textContent = s.title;
+  document.getElementById('info-sub').textContent = s.sub;
+  document.getElementById('info-text').innerHTML = s.text;
+
+  const img = document.getElementById('info-img');
+  img.src = PANEL_IMGS[s.panel + 1];
+  img.style.objectPosition = s.ix + '% ' + s.iy + '%';
+  img.style.transform = 'scale(' + s.is + ')';
+  img.style.transformOrigin = s.ix + '% ' + s.iy + '%';
+
+  document.getElementById('info-panel').classList.add('open');
+  document.body.classList.add('detail-open');
+
+  // Admin mode: make editable + set category selector
+  adminCurrentIdx = idx;
+  if (adminMode) {
+    adminMakeEditable();
+    document.getElementById('admin-cat-select').value = s.cat;
+  }
+}
+
+function closeInfo() {
+  document.getElementById('info-panel').classList.remove('open');
+  document.body.classList.remove('detail-open');
+  if (activeSpotEl) { activeSpotEl.classList.remove('active'); activeSpotEl = null; }
+}
+
+function zoomOut() {
+  closeInfo();
+  viewer.viewport.goHome(false);
+}
+
+// ── Admin: Add new spots by drawing ──
+let adminDrawing = false;
+let drawStart = null;
+
+function adminStartDraw() {
+  adminDrawing = true;
+  document.body.classList.add('admin-drawing');
+  // Disable OSD panning during draw
+  viewer.setMouseNavEnabled(false);
+}
+
+function adminCancelDraw() {
+  adminDrawing = false;
+  document.body.classList.remove('admin-drawing');
+  document.getElementById('admin-draw-rect').style.display = 'none';
+  drawStart = null;
+  viewer.setMouseNavEnabled(true);
+}
+
+function adminFinishDraw(vpRect) {
+  adminDrawing = false;
+  document.body.classList.remove('admin-drawing');
+  document.getElementById('admin-draw-rect').style.display = 'none';
+  drawStart = null;
+  viewer.setMouseNavEnabled(true);
+
+  // Convert viewport rect to panel-relative coordinates
+  const totalW = meta.width, totalH = meta.height;
+  const ar = totalH / totalW;
+  const panelOffsets = [];
+  let cumX = 0;
+  for (let i = 0; i < PANEL_WIDTHS.length; i++) { panelOffsets.push(cumX); cumX += PANEL_WIDTHS[i]; }
+
+  // Find which panel the center of the rect falls on
+  const centerXpx = vpRect.x * totalW + (vpRect.width * totalW) / 2;
+  let panel = 0;
+  for (let i = 0; i < PANEL_WIDTHS.length; i++) {
+    if (centerXpx >= panelOffsets[i] && centerXpx < panelOffsets[i] + PANEL_WIDTHS[i]) { panel = i; break; }
+  }
+
+  const pOff = panelOffsets[panel];
+  const pW = PANEL_WIDTHS[panel];
+  const px = Math.round(((vpRect.x * totalW) - pOff) / pW * 100);
+  const py = Math.round((vpRect.y / ar) * 100);
+  const pw = Math.round((vpRect.width * totalW) / pW * 100);
+  const ph = Math.round((vpRect.height / ar) * 100);
+
+  const newSpot = {
+    title: 'Neuer Bereich',
+    sub: 'Panel ' + (panel + 1) + ' — Beschreibung hinzufügen',
+    text: '<p>Beschreibung hier eingeben...</p>',
+    panel: panel, px: Math.max(0, px), py: Math.max(0, py),
+    pw: Math.min(100, pw), ph: Math.min(100, ph),
+    shape: 'rect', cat: 'geo',
+    ix: 50, iy: 50, is: 1.5
+  };
+
+  SPOTS.push(newSpot);
+  // Add overlay
+  const x = (pOff + pW * newSpot.px / 100) / totalW;
+  const y = (newSpot.py / 100) * ar;
+  const w = (pW * newSpot.pw / 100) / totalW;
+  const h = (newSpot.ph / 100) * ar;
+  const rect = new OpenSeadragon.Rect(x, y, w, h);
+  spotRects.push(rect);
+
+  const idx = SPOTS.length - 1;
+  const el = document.createElement('div');
+  el.className = 'spot cat-' + newSpot.cat;
+  el.innerHTML = '<div class="spot-num">' + (idx + 1) + '</div>' +
+    '<div class="spot-tip">' + newSpot.title + '</div>';
+
+  new OpenSeadragon.MouseTracker({
+    element: el,
+    clickHandler: function(e) { e.preventDefaultAction = true; spotClick(el, newSpot, idx, rect); }
+  });
+  el.addEventListener('click', (e) => { e.stopPropagation(); spotClick(el, newSpot, idx, rect); });
+  el.style.cursor = 'pointer';
+  viewer.addOverlay({ element: el, location: rect });
+  adminInitHandles(el, idx);
+
+  showToast('Neuer Bereich #' + (idx + 1) + ' erstellt');
+
+  // Open the new spot for editing
+  setTimeout(() => spotClick(el, newSpot, idx, rect), 300);
+}
+
+function adminDeleteSpot() {
+  if (adminCurrentIdx < 0 || adminCurrentIdx >= SPOTS.length) return;
+  if (!confirm('Bereich "' + SPOTS[adminCurrentIdx].title + '" wirklich löschen?')) return;
+
+  // Remove overlay
+  const overlays = document.querySelectorAll('.spot');
+  if (overlays[adminCurrentIdx]) {
+    viewer.removeOverlay(overlays[adminCurrentIdx]);
+  }
+
+  SPOTS.splice(adminCurrentIdx, 1);
+  spotRects.splice(adminCurrentIdx, 1);
+  closeInfo();
+
+  // Rebuild all overlays (to fix numbering)
+  viewer.clearOverlays();
+  spotRects = [];
+  addSpotOverlays();
+
+  showToast('Bereich gelöscht');
+}
+
+// Menu
+function toggleMenu() {
+  document.getElementById('menu-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#header-right')) document.getElementById('menu-dropdown').classList.remove('open');
+});
+
+// Legend
+function toggleLegend() {
+  document.getElementById('legend').classList.toggle('open');
+}
+
+function updateCatSelect() {
+  const sel = document.getElementById('admin-cat-select');
+  sel.innerHTML = '';
+  Object.keys(CATEGORIES).forEach(key => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = CATEGORIES[key].label;
+    sel.appendChild(opt);
+  });
+}
+
+function renderLegend() {
+  updateCatSelect();
+  const container = document.getElementById('legend-rows');
+  container.innerHTML = '';
+  Object.keys(CATEGORIES).forEach(key => {
+    const cat = CATEGORIES[key];
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    row.dataset.catKey = key;
+    row.innerHTML = '<div class="legend-dot" style="background:rgb(' + cat.colorRaw + ')"></div>' +
+      '<span class="legend-label">' + cat.label + '</span>';
+    if (adminMode) {
+      row.querySelector('.legend-label').setAttribute('contenteditable', 'true');
+      row.querySelector('.legend-label').addEventListener('blur', function() {
+        CATEGORIES[key].label = this.textContent;
+        saveLegend();
+      });
+      // Delete button
+      const del = document.createElement('span');
+      del.textContent = '\u2715';
+      del.style.cssText = 'cursor:pointer;color:rgba(255,100,100,0.6);font-size:10px;margin-left:auto;padding:2px 4px';
+      del.onclick = function() {
+        if (!confirm('Kategorie "' + cat.label + '" entfernen?')) return;
+        delete CATEGORIES[key];
+        renderLegend();
+        saveLegend();
+      };
+      row.appendChild(del);
+    }
+    container.appendChild(row);
+  });
+}
+
+function legendAddRow() {
+  const id = 'custom_' + Date.now();
+  const hue = Math.floor(Math.random() * 360);
+  const r = Math.round(128 + 127 * Math.cos(hue * Math.PI / 180));
+  const g = Math.round(128 + 127 * Math.cos((hue - 120) * Math.PI / 180));
+  const b = Math.round(128 + 127 * Math.cos((hue + 120) * Math.PI / 180));
+  CATEGORIES[id] = { label: 'Neue Kategorie', color: '', colorRaw: r+','+g+','+b };
+  renderLegend();
+  // Focus the new label for editing
+  const labels = document.querySelectorAll('.legend-label[contenteditable]');
+  if (labels.length > 0) labels[labels.length - 1].focus();
+  saveLegend();
+}
+
+async function saveLegend() {
+  // Save categories as part of a legend.json
+  await saveToServer('legend.json', CATEGORIES);
+}
+
+async function loadLegendData() {
+  try {
+    const r = await fetch('data/legend.json');
+    if (r.ok) {
+      const data = await r.json();
+      // Replace CATEGORIES with saved data
+      Object.keys(CATEGORIES).forEach(k => delete CATEGORIES[k]);
+      Object.keys(data).forEach(k => CATEGORIES[k] = data[k]);
+    }
+  } catch(e) {}
+}
+
+// Strip leftover contenteditable attrs from saved HTML
+function cleanHtml(html) {
+  return html.replace(/ contenteditable="[^"]*"/g, '');
+}
+
+// Modal
+function showModal(key) {
+  const data = MODAL_CONTENT[key];
+  document.getElementById('modal-body').innerHTML =
+    '<h2>' + data.title + '</h2><div class="modal-sub">' + data.sub + '</div>' + cleanHtml(data.html);
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('admin-login').classList.contains('open')) {
+      document.getElementById('admin-login').classList.remove('open'); return;
+    }
+    if (adminDrawing) { adminCancelDraw(); return; }
+    closeInfo(); closeModal();
+  }
+  if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); toggleAdmin(); }
+});
+
+// ── Admin Mode ──
+let adminMode = false;
+let adminCurrentIdx = -1;
+
+async function loadSavedData() {
+  // Load from server files (data/*.json), fall back to localStorage
+  try {
+    const r = await fetch('data/spots.json');
+    if (r.ok) {
+      const data = await r.json();
+      if (data.length > 0 && data[0].panel !== undefined) {
+        SPOTS.length = 0;
+        data.forEach(d => SPOTS.push(d));
+      }
+    }
+  } catch(e) {}
+
+  try {
+    const r = await fetch('data/modals.json');
+    if (r.ok) {
+      const data = await r.json();
+      Object.keys(data).forEach(key => {
+        if (MODAL_CONTENT[key]) {
+          if (data[key].title) MODAL_CONTENT[key].title = data[key].title;
+          if (data[key].sub) MODAL_CONTENT[key].sub = data[key].sub;
+          if (data[key].html) MODAL_CONTENT[key].html = data[key].html;
+        }
+      });
+    }
+  } catch(e) {}
+
+  try {
+    const r = await fetch('data/header.json');
+    if (r.ok) {
+      const h = await r.json();
+      if (h.title) document.querySelector('#header h1').textContent = h.title;
+      if (h.sub) document.querySelector('#header p').textContent = h.sub;
+    }
+  } catch(e) {}
+
+  await loadLegendData();
+  renderLegend();
+}
+
+// Save to server (writes to data/*.json on disk, requires auth)
+async function saveToServer(filename, data) {
+  try {
+    const r = await fetch('/api/save/' + filename, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + adminToken
+      },
+      body: JSON.stringify(data)
+    });
+    if (r.status === 401) {
+      showToast('Sitzung abgelaufen — bitte neu anmelden');
+      toggleAdmin(); toggleAdmin(); // logout then show login
+      return false;
+    }
+    return r.ok;
+  } catch(e) {
+    console.warn('Server-Speichern fehlgeschlagen:', e);
+    return false;
+  }
+}
+
+let adminToken = sessionStorage.getItem('kunyu_admin_token') || '';
+
+function toggleAdmin() {
+  if (!adminMode) {
+    // Show login dialog
+    document.getElementById('admin-login').classList.add('open');
+    document.getElementById('admin-pw').value = '';
+    document.getElementById('admin-pw-error').style.display = 'none';
+    setTimeout(() => document.getElementById('admin-pw').focus(), 100);
+    return;
+  }
+  // Disable admin mode
+  adminMode = false;
+  adminToken = '';
+  sessionStorage.removeItem('kunyu_admin_token');
+  document.body.classList.remove('admin-mode');
+  document.querySelector('#header h1').removeAttribute('contenteditable');
+  document.querySelector('#header p').removeAttribute('contenteditable');
+  document.getElementById('info-title').removeAttribute('contenteditable');
+  document.getElementById('info-sub').removeAttribute('contenteditable');
+  document.getElementById('info-text').removeAttribute('contenteditable');
+  renderLegend();
+}
+
+async function adminDoLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  const errEl = document.getElementById('admin-pw-error');
+  if (!pw) { errEl.textContent = 'Passwort eingeben'; errEl.style.display = 'block'; return; }
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    const data = await r.json();
+    if (data.ok && data.token) {
+      adminToken = data.token;
+      sessionStorage.setItem('kunyu_admin_token', adminToken);
+      adminMode = true;
+      document.body.classList.add('admin-mode');
+      document.querySelector('#header h1').setAttribute('contenteditable', 'true');
+      document.querySelector('#header p').setAttribute('contenteditable', 'true');
+      document.getElementById('admin-login').classList.remove('open');
+      renderLegend();
+      showToast('Admin-Modus aktiviert');
+    } else {
+      errEl.textContent = data.error || 'Falsches Passwort';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Server nicht erreichbar (läuft server.py?)';
+    errEl.style.display = 'block';
+  }
+}
+
+// Enter key in password field
+document.getElementById('admin-pw').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') adminDoLogin();
+  if (e.key === 'Escape') document.getElementById('admin-login').classList.remove('open');
+});
+// Click outside to close
+document.getElementById('admin-login').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('admin-login'))
+    document.getElementById('admin-login').classList.remove('open');
+});
+
+function adminMakeEditable() {
+  if (!adminMode) return;
+  const titleEl = document.getElementById('info-title');
+  const subEl = document.getElementById('info-sub');
+  const textEl = document.getElementById('info-text');
+  titleEl.setAttribute('contenteditable', 'true');
+  subEl.setAttribute('contenteditable', 'true');
+  textEl.setAttribute('contenteditable', 'true');
+
+  // auto-save on blur
+  const saveOnBlur = () => { if (adminMode && adminCurrentIdx >= 0) adminAutoSave(); };
+  titleEl.onblur = saveOnBlur;
+  subEl.onblur = saveOnBlur;
+  textEl.onblur = saveOnBlur;
+}
+
+function adminAutoSave() {
+  if (adminCurrentIdx < 0 || adminCurrentIdx >= SPOTS.length) return;
+  const s = SPOTS[adminCurrentIdx];
+  s.title = document.getElementById('info-title').textContent;
+  s.sub = document.getElementById('info-sub').textContent;
+  s.text = document.getElementById('info-text').innerHTML;
+  // Update tooltip
+  const overlays = document.querySelectorAll('.spot');
+  if (overlays[adminCurrentIdx]) {
+    const tip = overlays[adminCurrentIdx].querySelector('.spot-tip');
+    if (tip) tip.textContent = s.title.split('\u2014')[0].trim();
+  }
+}
+
+function adminChangeCat(newCat) {
+  if (adminCurrentIdx < 0) return;
+  const s = SPOTS[adminCurrentIdx];
+  const oldCat = s.cat;
+  s.cat = newCat;
+  // Update overlay class
+  const overlays = document.querySelectorAll('.spot');
+  if (overlays[adminCurrentIdx]) {
+    overlays[adminCurrentIdx].classList.remove('cat-' + oldCat);
+    overlays[adminCurrentIdx].classList.add('cat-' + newCat);
+    // Update number badge color
+    const numEl = overlays[adminCurrentIdx].querySelector('.spot-num');
+    if (numEl) {
+      numEl.style.background = 'rgba(' + CATEGORIES[newCat].colorRaw + ',0.85)';
+    }
+  }
+  // Update info panel badge
+  const cat = CATEGORIES[newCat];
+  const catEl = document.getElementById('info-cat');
+  catEl.textContent = cat.label;
+  catEl.style.background = 'rgba(' + cat.colorRaw + ',0.12)';
+  catEl.style.color = 'rgb(' + cat.colorRaw + ')';
+  catEl.style.border = '1px solid rgba(' + cat.colorRaw + ',0.25)';
+}
+
+async function adminSave() {
+  adminAutoSave();
+  const spotsData = SPOTS.map(s => ({ title: s.title, sub: s.sub, text: s.text, cat: s.cat,
+    panel: s.panel, px: s.px, py: s.py, pw: s.pw, ph: s.ph, shape: s.shape,
+    ix: s.ix, iy: s.iy, is: s.is }));
+  const headerData = {
+    title: document.querySelector('#header h1').textContent,
+    sub: document.querySelector('#header p').textContent
+  };
+
+  const results = await Promise.all([
+    saveToServer('spots.json', spotsData),
+    saveToServer('modals.json', MODAL_CONTENT),
+    saveToServer('header.json', headerData)
+  ]);
+
+  if (results.every(r => r)) {
+    showToast('Gespeichert (Dateien) ✓');
+  } else {
+    showToast('Fehler beim Speichern — läuft server.py?');
+  }
+}
+
+function adminExport() {
+  adminAutoSave();
+  const exportData = {
+    header: {
+      title: document.querySelector('#header h1').textContent,
+      sub: document.querySelector('#header p').textContent
+    },
+    spots: SPOTS.map(s => ({ title: s.title, sub: s.sub, text: s.text, cat: s.cat,
+      panel: s.panel, px: s.px, py: s.py, pw: s.pw, ph: s.ph, shape: s.shape })),
+    modals: MODAL_CONTENT
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'kunyu_data_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('JSON exportiert');
+}
+
+async function adminReset() {
+  if (!confirm('Alle gespeicherten Änderungen zurücksetzen? Die Original-Texte werden wiederhergestellt.')) return;
+  const h = { 'Content-Type':'application/json', 'Authorization':'Bearer '+adminToken };
+  await Promise.all([
+    fetch('/api/save/spots.json', { method:'POST', headers:h, body:'[]' }),
+    fetch('/api/save/modals.json', { method:'POST', headers:h, body:'{}' }),
+    fetch('/api/save/header.json', { method:'POST', headers:h, body:'{}' })
+  ]).catch(() => {});
+  location.reload();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('admin-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Make modal editable in admin mode
+const origShowModal = showModal;
+showModal = function(key) {
+  origShowModal(key);
+  if (adminMode) {
+    const body = document.getElementById('modal-body');
+    const h2 = body.querySelector('h2');
+    const sub = body.querySelector('.modal-sub');
+    const contentEls = body.querySelectorAll('p, h3, ul, li');
+    if (h2) h2.setAttribute('contenteditable', 'true');
+    if (sub) sub.setAttribute('contenteditable', 'true');
+    contentEls.forEach(el => el.setAttribute('contenteditable', 'true'));
+    // save on close
+    const origClose = closeModal;
+    closeModal = function() {
+      if (adminMode) {
+        const data = MODAL_CONTENT[key];
+        if (h2) data.title = h2.textContent.trim();
+        if (sub) data.sub = sub.textContent.trim();
+        // Rebuild html — clone so we can strip contenteditable without mutating DOM
+        const clone = body.cloneNode(true);
+        clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        let html = '';
+        clone.querySelectorAll(':scope > :not(h2):not(.modal-sub)').forEach(el => {
+          html += el.outerHTML;
+        });
+        if (html) data.html = html;
+        // Auto-save to server
+        saveToServer('modals.json', MODAL_CONTENT).then(ok => {
+          if (ok) showToast('Gespeichert ✓');
+          else showToast('Fehler: server.py läuft?');
+        });
+      }
+      origClose();
+      closeModal = origClose;
+    };
+  }
+};
+
+// Load saved data before init (async — fetches from server files)
+
+// ── Admin draw mouse handlers ──
+(function() {
+  const viewerEl = document.getElementById('viewer');
+  const drawRect = document.getElementById('admin-draw-rect');
+
+  viewerEl.addEventListener('pointerdown', (e) => {
+    if (!adminDrawing) return;
+    e.preventDefault();
+    const r = viewerEl.getBoundingClientRect();
+    drawStart = { x: e.clientX - r.left, y: e.clientY - r.top };
+    drawRect.style.left = drawStart.x + 'px';
+    drawRect.style.top = drawStart.y + 'px';
+    drawRect.style.width = '0';
+    drawRect.style.height = '0';
+    drawRect.style.display = 'block';
+  });
+
+  viewerEl.addEventListener('pointermove', (e) => {
+    if (!adminDrawing || !drawStart) return;
+    e.preventDefault();
+    const r = viewerEl.getBoundingClientRect();
+    const cx = e.clientX - r.left;
+    const cy = e.clientY - r.top;
+    const x = Math.min(drawStart.x, cx);
+    const y = Math.min(drawStart.y, cy);
+    const w = Math.abs(cx - drawStart.x);
+    const h = Math.abs(cy - drawStart.y);
+    drawRect.style.left = x + 'px';
+    drawRect.style.top = y + 'px';
+    drawRect.style.width = w + 'px';
+    drawRect.style.height = h + 'px';
+  });
+
+  viewerEl.addEventListener('pointerup', (e) => {
+    if (!adminDrawing || !drawStart) return;
+    e.preventDefault();
+    const r = viewerEl.getBoundingClientRect();
+    const cx = e.clientX - r.left;
+    const cy = e.clientY - r.top;
+    const x1 = Math.min(drawStart.x, cx);
+    const y1 = Math.min(drawStart.y, cy);
+    const x2 = Math.max(drawStart.x, cx);
+    const y2 = Math.max(drawStart.y, cy);
+
+    // Minimum size check (at least 20px)
+    if (x2 - x1 < 20 || y2 - y1 < 20) {
+      adminCancelDraw();
+      return;
+    }
+
+    // Convert pixel coords to viewport coords
+    const topLeft = viewer.viewport.pointFromPixel(new OpenSeadragon.Point(x1, y1));
+    const bottomRight = viewer.viewport.pointFromPixel(new OpenSeadragon.Point(x2, y2));
+    const vpRect = new OpenSeadragon.Rect(
+      topLeft.x, topLeft.y,
+      bottomRight.x - topLeft.x,
+      bottomRight.y - topLeft.y
+    );
+
+    adminFinishDraw(vpRect);
+  });
+})();
+
+// ── Admin: Resize & Move spots ──
+let adminDrag = { type: null, idx: -1, startVP: null, origRect: null };
+
+function adminVpFromXY(clientX, clientY) {
+  const r = document.getElementById('viewer').getBoundingClientRect();
+  return viewer.viewport.pointFromPixel(
+    new OpenSeadragon.Point(clientX - r.left, clientY - r.top)
+  );
+}
+
+function adminVpRectToSpot(vpRect) {
+  const totalW = meta.width, totalH = meta.height;
+  const ar = totalH / totalW;
+  const panelOffsets = [];
+  let cumX = 0;
+  for (let i = 0; i < PANEL_WIDTHS.length; i++) { panelOffsets.push(cumX); cumX += PANEL_WIDTHS[i]; }
+  const centerXpx = (vpRect.x + vpRect.width / 2) * totalW;
+  let panel = 0;
+  for (let i = 0; i < PANEL_WIDTHS.length; i++) {
+    if (centerXpx >= panelOffsets[i] && centerXpx < panelOffsets[i] + PANEL_WIDTHS[i]) { panel = i; break; }
+  }
+  const pOff = panelOffsets[panel], pW = PANEL_WIDTHS[panel];
+  return {
+    panel, px: Math.max(0, Math.round(((vpRect.x * totalW) - pOff) / pW * 100)),
+    py: Math.max(0, Math.round((vpRect.y / ar) * 100)),
+    pw: Math.min(100, Math.round((vpRect.width * totalW) / pW * 100)),
+    ph: Math.min(100, Math.round((vpRect.height / ar) * 100))
+  };
+}
+
+function adminInitHandles(spotEl, idx) {
+  const handles = spotEl.querySelectorAll('[data-handle]');
+  handles.forEach(handle => {
+    // OSD MouseTracker on each handle to intercept events before OSD canvas
+    new OpenSeadragon.MouseTracker({
+      element: handle,
+      pressHandler: function(e) {
+        if (!adminMode) return;
+        e.preventDefaultAction = true;
+        const orig = e.originalEvent;
+        adminDrag.type = handle.dataset.handle;
+        adminDrag.idx = idx;
+        adminDrag.startVP = adminVpFromXY(orig.clientX, orig.clientY);
+        adminDrag.origRect = spotRects[idx].clone();
+        viewer.setMouseNavEnabled(false);
+        document.body.style.cursor = adminDrag.type === 'move' ? 'grabbing' : adminDrag.type + '-resize';
+      },
+      dragHandler: function(e) {
+        if (adminDrag.type === null) return;
+        e.preventDefaultAction = true;
+        const orig = e.originalEvent;
+        const vp = adminVpFromXY(orig.clientX, orig.clientY);
+        const dx = vp.x - adminDrag.startVP.x;
+        const dy = vp.y - adminDrag.startVP.y;
+        const o = adminDrag.origRect;
+        let newRect;
+
+        if (adminDrag.type === 'move') {
+          newRect = new OpenSeadragon.Rect(o.x + dx, o.y + dy, o.width, o.height);
+        } else {
+          let x = o.x, y = o.y, w = o.width, h = o.height;
+          if (adminDrag.type === 'nw') { x += dx; y += dy; w -= dx; h -= dy; }
+          else if (adminDrag.type === 'ne') { y += dy; w += dx; h -= dy; }
+          else if (adminDrag.type === 'sw') { x += dx; w -= dx; h += dy; }
+          else if (adminDrag.type === 'se') { w += dx; h += dy; }
+          if (w < 0.003) w = 0.003;
+          if (h < 0.001) h = 0.001;
+          newRect = new OpenSeadragon.Rect(x, y, w, h);
+        }
+        viewer.updateOverlay(spotEl, newRect);
+        spotRects[adminDrag.idx] = newRect;
+      },
+      releaseHandler: function(e) {
+        if (adminDrag.type === null) return;
+        e.preventDefaultAction = true;
+        // Write back to SPOTS
+        const s = SPOTS[adminDrag.idx];
+        const d = adminVpRectToSpot(spotRects[adminDrag.idx]);
+        s.panel = d.panel; s.px = d.px; s.py = d.py; s.pw = d.pw; s.ph = d.ph;
+        adminDrag.type = null;
+        adminDrag.idx = -1;
+        document.body.style.cursor = '';
+        viewer.setMouseNavEnabled(true);
+        showToast('Position aktualisiert');
+      }
+    });
+  });
+}
+
+// ── Fullscreen Toggle ──
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fs-btn');
+  if (btn) btn.innerHTML = document.fullscreenElement
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 4 20 10 20"/><polyline points="20 10 20 4 14 4"/></svg> Vollbild beenden'
+    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg> Vollbild';
+});
+
+// ── Classical Chinese Character Dictionary (loaded from external file) ──
+let HANZI_DICT = {};
+fetch('hanzi_dict.json')
+  .then(r => r.json())
+  .then(data => { HANZI_DICT = data; })
+  .catch(e => console.warn('Hanzi dictionary not loaded:', e));
+
+// Process text to wrap CJK characters with dictionary tooltips (data-attr based)
+function annotateHanzi(html) {
+  return html.replace(/([\u4e00-\u9fff])/g, function(ch) {
+    const entry = HANZI_DICT[ch];
+    if (!entry) return ch;
+    return '<span class="hz" data-hz="' + ch + '" data-pin="' + entry[0] +
+      '" data-cls="' + entry[1].replace(/"/g,'&quot;') +
+      '" data-mod="' + entry[2].replace(/"/g,'&quot;') + '">' + ch + '</span>';
+  });
+}
+
+// Floating tooltip logic
+(function() {
+  const tip = document.getElementById('hz-float-tip');
+  let hideTimer = null;
+
+  document.addEventListener('mouseenter', function(e) {
+    const hz = e.target.closest('.hz');
+    if (!hz || !hz.dataset.hz) return;
+    clearTimeout(hideTimer);
+
+    tip.innerHTML = '<span class="hz-char">' + hz.dataset.hz + '</span>' +
+      '<span class="hz-pin">' + hz.dataset.pin + '</span>' +
+      '<div class="hz-cls">' + hz.dataset.cls + '</div>' +
+      '<div class="hz-mod">' + hz.dataset.mod + '</div>';
+
+    // Position above the character
+    const rect = hz.getBoundingClientRect();
+    tip.style.left = '0';
+    tip.style.top = '0';
+    tip.classList.add('visible');
+
+    // Measure tooltip size
+    const tipW = tip.offsetWidth;
+    const tipH = tip.offsetHeight;
+
+    let left = rect.left + rect.width / 2 - tipW / 2;
+    let top = rect.top - tipH - 6;
+
+    // Flip below if no space above
+    if (top < 4) {
+      top = rect.bottom + 6;
+    }
+    // Keep within viewport horizontally
+    if (left < 4) left = 4;
+    if (left + tipW > window.innerWidth - 4) left = window.innerWidth - tipW - 4;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }, true);
+
+  document.addEventListener('mouseleave', function(e) {
+    const hz = e.target.closest('.hz');
+    if (!hz) return;
+    hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
+  }, true);
+})();
+
+// Hook into openInfo to annotate Chinese characters (patched into original function)
+const _origOpenInfo = openInfo;
+openInfo = function(s, idx) {
+  _origOpenInfo(s, idx);
+  // In admin mode: skip annotation (would break contenteditable), but ensure editable is set
+  if (adminMode) {
+    adminMakeEditable();
+    return;
+  }
+  const textEl = document.getElementById('info-text');
+  const titleEl = document.getElementById('info-title');
+  textEl.innerHTML = annotateHanzi(textEl.innerHTML);
+  titleEl.innerHTML = annotateHanzi(titleEl.innerHTML);
+};
+
+loadSavedData().catch(() => {}).then(() => init());
+</script>
+</body>
+</html>
