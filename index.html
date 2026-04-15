@@ -165,26 +165,6 @@ body.admin-mode #legend-admin-btns{display:flex}
   overflow:hidden;
 }
 #info-panel.open{transform:translateX(0)}
-@media(max-width:900px){
-  #info-panel{width:320px}
-}
-@media(max-width:600px){
-  #info-panel{width:100%;height:65vh;top:auto;bottom:0;
-    border-left:none;border-top:1px solid rgba(255,255,255,0.06);
-    transform:translateY(100%)}
-  #info-panel.open{transform:translateY(0)}
-  #info-img-wrap{height:70px}
-  #info-close{top:10px;right:10px;width:30px;height:30px;font-size:14px}
-  #info-body{padding:1rem 1.2rem}
-  #info-title{font-size:16px;margin-bottom:4px}
-  #info-sub{margin-bottom:1rem}
-  #info-text{font-size:13px;line-height:1.7}
-  #info-back{padding:0.8rem 1.2rem}
-}
-@media(max-width:400px){
-  #info-img-wrap{height:50px}
-  #info-panel{height:70vh}
-}
 #info-close{
   position:absolute;top:16px;right:16px;
   background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
@@ -237,6 +217,29 @@ body.admin-mode #legend-admin-btns{display:flex}
 #info-back button:hover{
   background:rgba(255,200,60,0.15);
   border-color:rgba(255,200,60,0.35);
+}
+
+/* Responsive Info Panel — must come AFTER defaults to override */
+@media(max-width:900px){
+  #info-panel{width:320px}
+}
+@media(max-width:600px){
+  #info-panel{width:100%;height:55vh;top:auto;bottom:0;
+    border-left:none;border-top:1px solid rgba(255,255,255,0.06);
+    transform:translateY(100%)}
+  #info-panel.open{transform:translateY(0)}
+  #info-img-wrap{height:60px}
+  #info-close{top:8px;right:8px;width:28px;height:28px;font-size:13px}
+  #info-body{padding:0.9rem 1.1rem}
+  #info-title{font-size:16px;margin-bottom:4px}
+  #info-sub{margin-bottom:0.9rem}
+  #info-text{font-size:13px;line-height:1.7}
+  #info-back{padding:0.7rem 1.1rem}
+  #info-cat{margin-bottom:8px}
+  #info-num{margin-bottom:8px;width:24px;height:24px;font-size:11px}
+}
+@media(max-width:400px){
+  #info-img-wrap{height:45px}
 }
 
 /* Modal overlay for menu pages */
@@ -785,6 +788,36 @@ async function init() {
 
   viewer.addHandler('zoom', () => document.getElementById('hint').classList.add('hidden'));
   viewer.addHandler('open', () => addSpotOverlays());
+
+  // Pinch-Guard: blocks accidental spot-clicks during/shortly-after pinch-zoom on touch devices
+  const viewerEl = document.getElementById('viewer');
+  viewerEl.addEventListener('touchstart', (e) => {
+    if (e.touches.length >= 2) {
+      window._pinchActive = true;
+      window._pinchBlockUntil = Date.now() + 500;
+    }
+  }, { passive: true });
+  viewerEl.addEventListener('touchmove', (e) => {
+    if (e.touches.length >= 2) {
+      window._pinchActive = true;
+      window._pinchBlockUntil = Date.now() + 500;
+    }
+  }, { passive: true });
+  viewerEl.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) {
+      // keep block a bit after last finger lifts to avoid stray tap
+      window._pinchBlockUntil = Date.now() + 350;
+      window._pinchActive = false;
+    }
+  }, { passive: true });
+  viewerEl.addEventListener('touchcancel', () => {
+    window._pinchBlockUntil = Date.now() + 350;
+    window._pinchActive = false;
+  }, { passive: true });
+}
+
+function isPinchBlocked() {
+  return window._pinchActive || (window._pinchBlockUntil && Date.now() < window._pinchBlockUntil);
 }
 
 function addSpotOverlays() {
@@ -819,11 +852,13 @@ function addSpotOverlays() {
       element: el,
       clickHandler: function(e) {
         if (e.originalEvent && e.originalEvent.target.closest('[data-handle]')) return;
+        if (isPinchBlocked()) { e.preventDefaultAction = true; return; }
         e.preventDefaultAction = true; spotClick(el, s, i, rect);
       }
     });
     el.addEventListener('click', (e) => {
       if (e.target.closest('[data-handle]')) return;
+      if (isPinchBlocked()) { e.stopPropagation(); e.preventDefault(); return; }
       e.stopPropagation(); spotClick(el, s, i, rect);
     });
     el.style.cursor = 'pointer';
@@ -1016,9 +1051,15 @@ function adminFinishDraw(vpRect) {
 
   new OpenSeadragon.MouseTracker({
     element: el,
-    clickHandler: function(e) { e.preventDefaultAction = true; spotClick(el, newSpot, idx, rect); }
+    clickHandler: function(e) {
+      if (isPinchBlocked()) { e.preventDefaultAction = true; return; }
+      e.preventDefaultAction = true; spotClick(el, newSpot, idx, rect);
+    }
   });
-  el.addEventListener('click', (e) => { e.stopPropagation(); spotClick(el, newSpot, idx, rect); });
+  el.addEventListener('click', (e) => {
+    if (isPinchBlocked()) { e.stopPropagation(); e.preventDefault(); return; }
+    e.stopPropagation(); spotClick(el, newSpot, idx, rect);
+  });
   el.style.cursor = 'pointer';
   viewer.addOverlay({ element: el, location: rect });
   adminInitHandles(el, idx);
