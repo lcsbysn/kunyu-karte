@@ -30,9 +30,9 @@
     "is": 2
   },
   {
-    "title": "Ekliptik und Erdkugel",
+    "title": "Darstellung einer Armillarsphäre",
     "sub": "Panel 6 (rechts), unten links",
-    "text": "<p>Die Zeichnung zeigt eine <strong>Armillarsphäre</strong>, ein astronomisches Modell aus mehreren beweglichen Ringen. Jeder Ring steht für einen wichtigen Himmelskreis, also Äquator, Ekliptik und Wendekreise. In der Mitte sitzt die Erde als Kugel.</p><p>Im Chinesischen heißt das Instrument <strong><span class=\"hz\" data-hz=\"天\" data-pin=\"tiān\" data-cls=\"heaven; sky; day; nature\" data-mod=\"Himmel; Tag; Natur — 天下 = Alles unter dem Himmel\">天</span><span class=\"hz\" data-hz=\"地\" data-pin=\"dì\" data-cls=\"earth; ground; land; territory\" data-mod=\"Erde; Boden; Land; Gebiet\">地</span><span class=\"hz\" data-hz=\"儀\" data-pin=\"yí\" data-cls=\"instrument; ceremony; model\" data-mod=\"Instrument; Zeremonie; Vorbild; Maß\">儀</span></strong> (Himmel-Erde-Instrument). Für die Ming-Zeit war die Kugelform der Erde neu, denn die traditionelle Kosmologie ging von <em><span class=\"hz\" data-hz=\"天\" data-pin=\"tiān\" data-cls=\"heaven; sky; day; nature\" data-mod=\"Himmel; Tag; Natur — 天下 = Alles unter dem Himmel\">天</span><span class=\"hz\" data-hz=\"圓\" data-pin=\"yuán\" data-cls=\"round; circle; complete\" data-mod=\"rund; Kreis; vollständig\">圓</span><span class=\"hz\" data-hz=\"地\" data-pin=\"dì\" data-cls=\"earth; ground; land; territory\" data-mod=\"Erde; Boden; Land; Gebiet\">地</span><span class=\"hz\" data-hz=\"方\" data-pin=\"fāng\" data-cls=\"square; direction; method; region\" data-mod=\"quadratisch; Richtung; Methode; Gegend\">方</span></em> aus, also „der Himmel ist rund, die Erde quadratisch\".</p>",
+    "text": "<p>Die Zeichnung zeigt eine <strong>Armillarsphäre</strong>, ein astronomisches Modell aus mehreren beweglichen Ringen. Jeder Ring steht für einen wichtigen Himmelskreis, also Äquator, Ekliptik und Wendekreise. In der Mitte sitzt die Erde als Kugel.</p>",
     "cat": "astro",
     "panel": 5,
     "px": 28,
