@@ -239,6 +239,40 @@ body.admin-mode #legend-admin-btns{display:flex}
   #info-cat{margin-bottom:8px}
   #info-num{margin-bottom:8px;width:24px;height:24px;font-size:11px}
 }
+/* Landscape-Phone: niedrige Höhe → auch Bild ausblenden (Sidebar bleibt sonst) */
+@media(max-height:500px) and (orientation:landscape){
+  #info-img-wrap{display:none}
+  #info-close{top:8px;right:8px;width:28px;height:28px;font-size:13px;
+    background:rgba(20,16,10,0.85);border:1px solid rgba(255,255,255,0.12)}
+  #info-body{padding:0.9rem 1.1rem}
+  #info-title{font-size:15px}
+  #info-sub{margin-bottom:0.8rem}
+  #info-text{font-size:13px;line-height:1.7}
+  #info-back{padding:0.7rem 1.1rem}
+}
+
+/* Mobile (portrait oder landscape-phone): Header weg, 3-Punkte als Floating Button */
+@media(max-width:600px), (max-height:500px){
+  #header{
+    position:fixed;top:0;right:0;left:auto;
+    background:none;backdrop-filter:none;border-bottom:none;
+    padding:10px;z-index:60;
+  }
+  #header > div:first-child{display:none}
+  #header-right{position:static;transform:none;right:auto}
+  #menu-btn{
+    background:rgba(18,16,12,0.82);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.1);
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    padding:0;color:rgba(255,255,255,0.9);
+    font-size:22px;letter-spacing:1px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.45);
+  }
+  #menu-btn:hover{background:rgba(28,24,18,0.9)}
+  #menu-dropdown{top:calc(100% + 8px);right:0}
+}
 
 /* Modal overlay for menu pages */
 #modal{
@@ -770,12 +804,13 @@ async function init() {
     zoomPerScroll: 1.25,
     gestureSettingsMouse: { scrollToZoom: true, clickToZoom: false, dblClickToZoom: false },
     gestureSettingsTouch: {
-      pinchToZoom: true,
-      zoomToRefPoint: true,
+      pinchToZoom: false,
+      zoomToRefPoint: false,
       flickEnabled: true,
-      flickMinSpeed: 60,
-      flickMomentum: 0.4,
-      pinchRotate: false
+      flickMinSpeed: 40,
+      flickMomentum: 0.5,
+      pinchRotate: false,
+      dragToPan: true
     },
     crossOriginPolicy: 'Anonymous',
     placeholderFillStyle: '#0a0804',
@@ -785,32 +820,83 @@ async function init() {
   });
 
   viewer.addHandler('zoom', () => document.getElementById('hint').classList.add('hidden'));
-  viewer.addHandler('open', () => addSpotOverlays());
+  viewer.addHandler('open', () => {
+    addSpotOverlays();
+    // Auf Mobile etwas näher an die Karte starten
+    if (window.innerWidth <= 600 || window.innerHeight <= 500) {
+      const homeZoom = viewer.viewport.getHomeZoom();
+      viewer.viewport.zoomTo(homeZoom * 1.6, null, true);
+    }
+  });
 
-  // Pinch-Guard: blocks accidental spot-clicks during/shortly-after pinch-zoom on touch devices
+  // Touch-Handling: Zwei-Finger-Gestik selbst implementieren
+  // (OSD's pinchToZoom ist aus → wir machen Pan + Zoom hier)
   const viewerEl = document.getElementById('viewer');
+  let tf = null; // two-finger state: {cx, cy, dist}
+
   viewerEl.addEventListener('touchstart', (e) => {
     if (e.touches.length >= 2) {
       window._pinchActive = true;
       window._pinchBlockUntil = Date.now() + 500;
+      const p1 = e.touches[0], p2 = e.touches[1];
+      tf = {
+        cx: (p1.clientX + p2.clientX) / 2,
+        cy: (p1.clientY + p2.clientY) / 2,
+        dist: Math.hypot(p2.clientX - p1.clientX, p2.clientY - p1.clientY)
+      };
     }
-  }, { passive: true });
+  }, { passive: false });
+
   viewerEl.addEventListener('touchmove', (e) => {
-    if (e.touches.length >= 2) {
+    if (e.touches.length >= 2 && tf && viewer && viewer.viewport) {
+      // Browser-Default (Page-Zoom/Scroll) blocken
+      if (e.cancelable) e.preventDefault();
       window._pinchActive = true;
       window._pinchBlockUntil = Date.now() + 500;
+
+      const p1 = e.touches[0], p2 = e.touches[1];
+      const cx = (p1.clientX + p2.clientX) / 2;
+      const cy = (p1.clientY + p2.clientY) / 2;
+      const dist = Math.hypot(p2.clientX - p1.clientX, p2.clientY - p1.clientY);
+
+      // Pan: Mittelpunkt-Bewegung übersetzen
+      const dx = cx - tf.cx;
+      const dy = cy - tf.cy;
+      if (dx || dy) {
+        const delta = viewer.viewport.deltaPointsFromPixels(
+          new OpenSeadragon.Point(-dx, -dy)
+        );
+        viewer.viewport.panBy(delta, true);
+      }
+
+      // Zoom: Fingerabstand-Verhältnis
+      if (dist > 0 && tf.dist > 0) {
+        const zoomFactor = dist / tf.dist;
+        if (Math.abs(zoomFactor - 1) > 0.001) {
+          const viewerRect = viewerEl.getBoundingClientRect();
+          const refPx = new OpenSeadragon.Point(
+            cx - viewerRect.left,
+            cy - viewerRect.top
+          );
+          const refVp = viewer.viewport.pointFromPixel(refPx);
+          viewer.viewport.zoomBy(zoomFactor, refVp, true);
+        }
+      }
+      tf = { cx, cy, dist };
     }
-  }, { passive: true });
+  }, { passive: false });
+
   viewerEl.addEventListener('touchend', (e) => {
     if (e.touches.length < 2) {
-      // keep block a bit after last finger lifts to avoid stray tap
       window._pinchBlockUntil = Date.now() + 350;
       window._pinchActive = false;
+      tf = null;
     }
   }, { passive: true });
   viewerEl.addEventListener('touchcancel', () => {
     window._pinchBlockUntil = Date.now() + 350;
     window._pinchActive = false;
+    tf = null;
   }, { passive: true });
 }
 
