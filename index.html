@@ -960,10 +960,20 @@ function spotClick(el, s, i, rect) {
   const viewerEl = document.getElementById('viewer');
   const viewerW = viewerEl.clientWidth;
   const viewerH = viewerEl.clientHeight;
-  // Get actual panel width (responsive: 420px, 320px on small, or full width on mobile)
   const panelEl = document.getElementById('info-panel');
-  const panelW = viewerW <= 600 ? 0 : Math.min(420, parseInt(getComputedStyle(panelEl).width));
+
+  // Panel-Geometrie je nach Layout:
+  // - Mobile portrait (<=600px): Panel unten, 55vh hoch → panelH
+  // - Sonst (Desktop / Landscape-Phone): Panel rechts → panelW
+  const isMobilePortrait = viewerW <= 600;
+  let panelW = 0, panelH = 0;
+  if (isMobilePortrait) {
+    panelH = Math.round(viewerH * 0.55);  // muss zu CSS height:55vh passen
+  } else {
+    panelW = Math.min(420, parseInt(getComputedStyle(panelEl).width));
+  }
   const visibleW = viewerW - panelW;
+  const visibleH = viewerH - panelH;
 
   // Padded detail bounds (viewport coords)
   const pad = 0.12;
@@ -973,23 +983,20 @@ function spotClick(el, s, i, rect) {
   tb.width *= (1 + pad * 2);
   tb.height *= (1 + pad * 2);
 
-  // Compute zoom so tb fills the visible area (left of info panel) as large as possible.
-  // In OSD: at zoom Z, 1 viewport unit = Z * viewerW pixels.
-  // tb.width viewport units = tb.width * Z * viewerW pixels → must fit in visibleW px
-  // tb.height viewport units = tb.height * Z * viewerW pixels → must fit in viewerH px
+  // Zoom so berechnen, dass tb in die sichtbare Fläche passt.
+  // In OSD: bei Zoom Z ist 1 Viewport-Einheit = Z * viewerW Pixel (auch in y-Richtung).
   const zoomForW = visibleW / (viewerW * tb.width);
-  const zoomForH = viewerH / (viewerW * tb.height);
+  const zoomForH = visibleH / (viewerW * tb.height);
   const zoom = Math.min(zoomForW, zoomForH);
 
-  // Compute viewport center so tb appears centered in the visible area (left of panel).
-  // tb center should appear at pixel (visibleW/2, viewerH/2).
-  // OSD viewport center appears at pixel (viewerW/2, viewerH/2).
-  // So shift viewport center RIGHT by (viewerW/2 - visibleW/2) = panelW/2 pixels.
-  // In viewport coords: panelW / (2 * zoom * viewerW)
+  // Viewport-Mittelpunkt so verschieben, dass tb im sichtbaren Bereich zentriert ist.
+  // OSD zentriert normalerweise auf (viewerW/2, viewerH/2); wir wollen aber
+  // (visibleW/2, visibleH/2). Shift = halbe Panel-Ausdehnung in die entsprechende Richtung.
   const tbCenterX = tb.x + tb.width / 2;
   const tbCenterY = tb.y + tb.height / 2;
-  const shiftX = panelW / (2 * zoom * viewerW);
-  const vpCenter = new OpenSeadragon.Point(tbCenterX + shiftX, tbCenterY);
+  const shiftX = panelW / (2 * zoom * viewerW);  // nach rechts bei Sidebar
+  const shiftY = panelH / (2 * zoom * viewerW);  // nach unten bei Bottom-Sheet
+  const vpCenter = new OpenSeadragon.Point(tbCenterX + shiftX, tbCenterY + shiftY);
 
   // Slow, cinematic fly-to
   viewer.viewport.centerSpringX.animationTime = 1.4;
