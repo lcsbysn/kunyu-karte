@@ -334,6 +334,32 @@ body.admin-mode #legend-admin-btns{display:flex}
 .hz-cls{font-size:11px;color:rgba(255,255,255,0.55);font-weight:300;margin-top:3px;line-height:1.5;clear:both}
 .hz-mod{font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;font-weight:300;font-style:italic}
 
+/* Footnote hover system */
+sup.fn{
+  cursor:help;
+  color:rgba(210,180,110,0.8);
+  font-size:9px;font-weight:600;
+  vertical-align:super;line-height:0;
+  border-bottom:1px dotted rgba(210,180,110,0.3);
+  padding:0 1px;
+  transition:color .2s,border-color .2s;
+}
+sup.fn:hover{color:#e8c870;border-bottom-color:rgba(210,180,110,0.7)}
+#fn-float-tip{
+  position:fixed;
+  background:rgba(10,8,4,0.96);backdrop-filter:blur(16px);
+  border:1px solid rgba(210,180,110,0.18);border-radius:10px;
+  padding:10px 14px;min-width:220px;max-width:340px;
+  pointer-events:none;opacity:0;
+  transition:opacity .2s cubic-bezier(0.25,0.1,0.25,1),transform .2s cubic-bezier(0.25,0.1,0.25,1);
+  z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  text-align:left;white-space:normal;
+  transform:translateY(4px);
+}
+#fn-float-tip.visible{opacity:1;transform:translateY(0)}
+.fn-cite{font-size:12px;color:rgba(255,255,255,0.65);font-weight:300;line-height:1.65}
+.fn-page{font-size:10px;color:rgba(210,180,110,0.6);margin-top:5px;font-style:italic}
+
 /* Admin mode */
 body.admin-mode #admin-bar{display:flex}
 body.admin-mode .spot{border:1.5px dashed rgba(255,200,60,0.35)!important}
@@ -626,6 +652,7 @@ body.detail-open #footer{
 </div>
 <div class="admin-saved-toast" id="admin-toast">Gespeichert ✓</div>
 <div id="hz-float-tip"></div>
+<div id="fn-float-tip"></div>
 
 <div id="admin-login">
   <div id="admin-login-box">
@@ -1822,6 +1849,49 @@ function annotateHanzi(html) {
   document.addEventListener('mouseleave', function(e) {
     const hz = e.target.closest('.hz');
     if (!hz) return;
+    hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
+  }, true);
+})();
+
+// ── Footnote reference dictionary ──
+const FN_REFS = {
+  chen1939:      "Ch'en, K. (1939). Matteo Ricci's contribution to, and influence on, geographical knowledge in China. <em>Journal of the American Oriental Society</em>, <em>59</em>(3), 325–359.",
+  giles1918:     "Giles, L. (1918). Translations from the Chinese world map of Father Ricci. <em>The Geographical Journal</em>, <em>52</em>(6), 367–385.",
+  szczesniak1954:"Szczesniak, B. (1954). Matteo Ricci's maps of China. <em>Imago Mundi</em>, <em>11</em>, 127–136.",
+  livieratos2016:"Livieratos, E. (2016). The Matteo Ricci 1602 Chinese world map: The Ptolemaean echoes. <em>International Journal of Cartography</em>, <em>2</em>(2), 186–201.",
+  delia1938:     "D'Elia, P. M. (1938). <em>Il mappamondo cinese del P. Matteo Ricci S.I. (terza edizione, Pechino 1602)</em>. Biblioteca Apostolica Vaticana.",
+  needham1959:   "Needham, J. (1959). <em>Science and civilisation in China: Vol. 3. Mathematics and the sciences of the heavens and the earth</em>. Cambridge University Press.",
+  brockey2007:   "Brockey, L. M. (2007). <em>Journey to the East: The Jesuit mission to China, 1579–1724</em>. Belknap Press of Harvard University Press.",
+  frost2017:     "Frost, D. (2017). <em>Misrepresentation, manipulation, and misunderstandings: The early Jesuit mission to China 1580–1610</em>."
+};
+
+// Footnote hover tooltip
+(function(){
+  const tip = document.getElementById('fn-float-tip');
+  let hideTimer = null;
+
+  document.addEventListener('mouseenter', function(e){
+    const fn = e.target.closest('sup.fn');
+    if(!fn) return;
+    clearTimeout(hideTimer);
+    const ref = FN_REFS[fn.dataset.ref] || fn.dataset.ref || '';
+    const page = fn.dataset.page || '';
+    tip.innerHTML = '<div class="fn-cite">' + ref + '</div>' +
+      (page ? '<div class="fn-page">' + page + '</div>' : '');
+    tip.style.left = '0'; tip.style.top = '0';
+    tip.classList.add('visible');
+    const tipW = tip.offsetWidth, tipH = tip.offsetHeight;
+    const rect = fn.getBoundingClientRect();
+    let left = rect.left + rect.width / 2 - tipW / 2;
+    let top  = rect.top - tipH - 6;
+    if (top < 4) top = rect.bottom + 6;
+    if (left < 4) left = 4;
+    if (left + tipW > window.innerWidth - 4) left = window.innerWidth - tipW - 4;
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  }, true);
+
+  document.addEventListener('mouseleave', function(e){
+    if (!e.target.closest('sup.fn')) return;
     hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
   }, true);
 })();

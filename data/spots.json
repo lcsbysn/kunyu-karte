@@ -1,8 +1,8 @@
 [
   {
-    "title": "Titel der Karte",
+    "title": "坤輿萬國全圖 — Titel der Karte",
     "sub": "Panel 6 (rechts), oben rechts",
-    "text": "<p>Die drei großen Schriftzeichen <strong>坤輿萬國全圖</strong> bedeuten „Vollständige Karte der zehntausend Länder der Erde\". <em>坤</em> steht für die Erde im I-Ging, <em>輿</em> für den Träger – zusammen „das Fundament, das die Erde trägt\".</p><p>Die Karte wurde 1602 auf Befehl des Wanli-Kaisers gedruckt. Matteo Ricci und der chinesische Gelehrte Li Zhizao (李之藻) erstellten sie gemeinsam als Holzblockdruck auf Maulbeerpapier – ursprünglich für einen Paravent im Kaiserpalast bestimmt.</p>",
+    "text": "<p>Die drei großen Schriftzeichen 坤輿萬國全圖 bezeichnen die Karte als „Vollständige Karte der zehntausend Länder der Welt". 坤 steht im Yijing für das Irdische und Empfangende; 輿 bedeutet „Träger" — zusammen das Fundament, das die Welt trägt. Die Formel 萬國 (wànguó, „zehntausend Länder") ist ein klassischer chinesischer Ausdruck für die gesamte Welt und verankerte den westlichen Anspruch auf Vollständigkeit in einer dem Kaiserhof vertrauten Sprache.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 325–326\">¹</sup></p><p>Die Karte entstand 1602 auf Befehl des Wanli-Kaisers und wurde von Matteo Ricci gemeinsam mit dem Gelehrten Li Zhizao (李之藻) als Holzblockdruck auf Maulbeerpapier gefertigt. Ursprünglich war sie für einen Paravent im Kaiserpalast bestimmt; nach Erhalt ordnete Wanli über tausend Exemplare für den Verbleib in der Verbotenen Stadt an.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 127–128\">²</sup></p>",
     "cat": "text",
     "panel": 5,
     "px": 72,
@@ -15,9 +15,9 @@
     "is": 2.5
   },
   {
-    "title": "Die neun Himmel",
+    "title": "九重天圖 — Die neun Himmelssphären",
     "sub": "Panel 6 (rechts), oben links",
-    "text": "<p>Die Zeichnung stellt die <strong>neun Himmel</strong> dar, das astronomische Weltbild nach Ptolemäus und Aristoteles. Die Erde liegt im Zentrum, umgeben von den sieben Planetensphären des Mondes, Merkur, Venus, Sonne, Mars, Jupiter und Saturn. Darüber folgen die Sphäre der Fixsterne und das Primum Mobile, der äußerste bewegte Himmel.</p><p>Im Chinesischen heißt das Diagramm <strong>九重天圖</strong>, also „Karte der neun Himmel\".</p>",
+    "text": "<p>Das konzentrische Kreisdiagramm heißt 九重天圖 — „Karte der neun Himmel". Es zeigt das ptolemäisch-aristotelische Weltbild: die Erde im Zentrum, umgeben von den vier Elementsphären Wasser, Luft und Feuer, darüber die sieben Planetensphären von Mond, Merkur, Venus, Sonne, Mars, Jupiter und Saturn, ganz außen das Firmament der Fixsterne und das Primum Mobile, der erste Beweger.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 190–192\">¹</sup></p><p>Ricci übernahm das geozentrische Modell bewusst, obwohl Kopernikus' heliozentrisches System zu diesem Zeitpunkt bereits formuliert war. Das Ptolemäische Weltbild ließ sich glatter in chinesische astronomische Kategorien übersetzen: Auch die chinesische Tradition stellte die Erde ins Zentrum kosmischer Bewegungen. Das Diagramm war eine Brücke, keine Kapitulation vor dem Veralteten.<sup class=\"fn\" data-ref=\"needham1959\" data-page=\"S. 220–227\">²</sup></p>",
     "cat": "astro",
     "panel": 5,
     "px": 27,
@@ -30,9 +30,9 @@
     "is": 2
   },
   {
-    "title": "Darstellung einer Armillarsphäre",
+    "title": "天地儀 — Ekliptik und Erdkugel",
     "sub": "Panel 6 (rechts), unten links",
-    "text": "<p>Die Zeichnung zeigt eine <strong>Armillarsphäre</strong>, ein astronomisches Modell aus mehreren beweglichen Ringen. Jeder Ring steht für einen wichtigen Himmelskreis, also Äquator, Ekliptik und Wendekreise. In der Mitte sitzt die Erde als Kugel.</p>",
+    "text": "<p>Das untere Kreisdiagramm zeigt die 天地儀 — das „Himmel-Erde-Instrument", eine schematische Armillarsphäre. Die Ringe repräsentieren Äquator, Ekliptik und Wendekreise; die Erdkugel sitzt im Zentrum. Das Diagramm demonstriert visuell die Neigung der Erdachse und erklärt damit Jahreszeiten und Klimazonen.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 194–196\">¹</sup></p><p>Für das chinesische Publikum war die Kugelgestalt der Erde eine direkte Provokation. Die traditionelle Kosmologie lehrte 天圓地方 — „der Himmel ist rund, die Erde quadratisch" — ein Weltbild, das in Architektur, Ritualtopografie und politischer Symbolik tief verankert war.<sup class=\"fn\" data-ref=\"needham1959\" data-page=\"S. 210–216\">²</sup> Ricci widerlegte diese Vorstellung nicht frontal, sondern verpackte sie in mathematisch demonstrierbare Astronomie — kommentiert von Li Zhizao in klassischem Wenyan.</p>",
     "cat": "astro",
     "panel": 5,
     "px": 28,
@@ -47,7 +47,7 @@
   {
     "title": "Widmung & Vorwort an den Kaiser",
     "sub": "Panel 6 (rechts), rechte Textspalten",
-    "text": "<p>Die langen vertikalen Textspalten bilden das <strong>Vorwort</strong> der Karte, gerichtet an Kaiser Wanli. Ricci erklärt darin westliche Kartografiegrundlagen: Längen- und Breitengrade, die Kugelform der Erde, Entfernungsmessung und die fünf Kontinente.</p>",
+    "text": "<p>Die langen vertikalen Textspalten bilden das Vorwort der Karte, gerichtet an Kaiser Wanli. Ricci erklärt darin die Grundlagen westlicher Kartografie: Längen- und Breitengrade, die Kugelform der Erde, Entfernungsmessung und die Einteilung der Welt in fünf Kontinente.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 367–369\">¹</sup></p><p>Im Stil klassischer chinesischer Literatur formuliert Ricci: <em>„Man verlässt die Türschwelle nicht und reist doch durch zehntausend Länder."</em> Diese kulturelle Anpassung war Absicht, nicht Zufall. Wer am Kaiserhof Wissen vermitteln wollte, sprach in den Kategorien seiner Leser — und Ricci beherrschte die klassische Schriftsprache Wenyan nach einem Jahrzehnt in China besser als die meisten seiner zeitgenössischen Amtskollegen.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 327–330\">²</sup></p>",
     "cat": "text",
     "panel": 5,
     "px": 74,
@@ -60,9 +60,9 @@
     "is": 1.4
   },
   {
-    "title": "大明",
+    "title": "大明 — China im Zentrum der Welt",
     "sub": "Panel 3 (Mitte), China und Ostasien",
-    "text": "<p>Das Herzstück der Karte: <strong>大明</strong> (das Große Ming-Reich) liegt auf den ersten Blick mittig auf der Karte, allerdings ist die Position nach ptolemäischem Vorbild mathematisch korrekt platziert.</p>",
+    "text": "<p>China liegt auf dieser Karte im Zentrum — und das war keine Selbstverständlichkeit. Auf zeitgenössischen europäischen Karten verlief der Nullmeridian durch die Kanarischen Inseln oder durch Rom; Europa stand im Mittelpunkt. Ricci verschob den Meridian in den östlichen Pazifik, damit 大明 — das Große Ming-Reich — exakt in der Bildmitte erscheint.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 328–333\">¹</sup></p><p>Diese Entscheidung war diplomatische Strategie. Der Begriff 天下 — „alles unter dem Himmel" — meinte in der chinesischen Geopolitik nicht den Globus, sondern das Reich mit dem Himmelssohn an der Spitze. Eine Karte, die China an den Rand drängte, wäre am Kaiserhof undenkbar gewesen.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 367–368\">²</sup> Ricci übersetzte diese imperiale Selbstverortung in westliche Wissenschaftssprache, ohne sie zu widerlegen — ein Kompromiss, der ihm Zugang zum Hof öffnete, den kein anderer Jesuit je erreicht hatte.</p><p>Gleichzeitig ist die Karte mathematisch korrekt. Breitengrade verlaufen parallel, Proportionen stimmen. China ist zentral <em>und</em> geografisch präzise — das war die eigentliche Leistung: westliche Kartografietechnik und chinesisches Weltbild wurden nicht gegeneinandergestellt, sondern ineinandergefaltet.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 129–132\">³</sup></p>",
     "cat": "geo",
     "panel": 2,
     "px": 10,
@@ -77,7 +77,7 @@
   {
     "title": "Instrument zur Gradmessung",
     "sub": "Panel 3 (Mitte), unterer Bereich",
-    "text": "<span _d-id=\"596\" class=\"--l --r container-target\"><span _d-id=\"598\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Eine</span> <span _d-id=\"602\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Beschreibung</span>, <span _d-id=\"606\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">wie</span> <span _d-id=\"610\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">man</span> <span _d-id=\"614\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ein</span> <span _d-id=\"618\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Gerät</span> <span _d-id=\"622\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">zur</span> <span _d-id=\"626\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Messung</span> <span _d-id=\"630\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">des</span> <span _d-id=\"634\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Winkels</span> <span _d-id=\"638\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">zum</span> <span _d-id=\"642\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Polarstern</span> <span _d-id=\"646\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">baut</span>.</span>",
+    "text": "<p>Der Textblock beschreibt den Bau eines einfachen Instruments zur Messung des Polarsternwinkels — also der geografischen Breite. Im Prinzip handelt es sich um ein einfaches Quadrant: Man visiert den Polarstern an und liest den Winkel ab. Je höher der Polarstern steht, desto weiter nördlich befindet man sich.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 196–198\">¹</sup></p><p>Die Anleitung steht mitten im Pazifik — dem größten Leerraum der Karte. Ricci nutzte diese Fläche bewusst für Lehrtexte, statt sie mit Fabelwesen zu füllen. Das ist selbst eine inhaltliche Aussage: Wo das Wissen endet, folgt bei Ricci Methode — nicht Mythos.</p>",
     "cat": "kartografie",
     "panel": 2,
     "px": 5,
@@ -90,9 +90,9 @@
     "is": 2
   },
   {
-    "title": "Erste Darstellung Amerikas auf einer chinesischen Karte",
+    "title": "亞墨利加洲 — Amerika auf Chinesisch",
     "sub": "Panel 4 & 5, rechte Kartenhälfte",
-    "text": "<p>Die erste Darstellung Nord- und Südamerikas auf einer chinesischen Karte und die erste Karte eines europäischen Gelehrten mit Amerika im Osten.</p><p>Die Textkästen beschreiben die \"Neue Welt\": \"Schildkröten so groß wie Schilder, Menschen mit seltsamen Sitten, Gold und Silber in unvorstellbaren Mengen.\" Die Westküste Nordamerikas ist stark verzerrt, da sie zu der Zeit noch kaum erforscht war.</p>",
+    "text": "<p>Nur 110 Jahre nach Kolumbus erscheint Amerika auf einer chinesischen Karte als eigener Kontinent. Ricci nennt ihn 亞墨利加洲 (Yàmòlìjiā Zhōu) — eine der frühesten phonetischen Übertragungen von „America" ins Chinesische.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 340–344\">¹</sup> Es ist gleichzeitig die erste Karte eines europäischen Gelehrten, auf der Amerika östlich der dargestellten Hemisphäre liegt — eine direkte Folge von Riccis Meridianverschiebung zugunsten Chinas.</p><p>Die Beschriftungen der Neuen Welt mischen portugiesische Reiseberichte mit europäischen Legenden: Schildkröten so groß wie Schilder, Gold in unvorstellbaren Mengen, fremdartige Sitten. Die Westküste Nordamerikas ist stark verzerrt — sie war 1602 kaum erforscht. Die Karte zeigt damit ihr eigenes Gefälle: Präzision dort, wo Daten vorlagen; Spekulation dort, wo sie fehlten.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 131–133\">²</sup></p>",
     "cat": "geo",
     "panel": 4,
     "px": 1,
@@ -105,9 +105,9 @@
     "is": 1.4
   },
   {
-    "title": "Darstellung der Nordhalbkugel",
-    "sub": "Panel 1 - oben rechts",
-    "text": "Eine kreisförmige Darstellung der Nordhalbkugel, um die sphärische Form der Erde zu betonen.",
+    "title": "北極圖 — Nordpolkarte",
+    "sub": "Panel 1 (ganz links), oben",
+    "text": "<p>Das Kreisdiagramm zeigt die 北極圖 — eine Polarprojektion der Nordhalbkugel mit Sternenkonstellationen und Navigationslinien. Es ist das kartografische Gegenstück zur Südpoldarstellung auf demselben Panel weiter unten.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 186–188\">¹</sup></p><p>Beide Polardarstellungen lösen ein Problem der Hauptkarte: In der zylindrischen Projektion lassen sich die Pole nicht darstellen, ohne die Proportionen dort extrem zu verzerren. Ricci ergänzte deshalb separate Kreisdiagramme, die zusammen mit der Hauptkarte ein vollständiges sphärisches Kartografiesystem ergeben — ein Hinweis auf das westliche Konzept des Globus als Grundlage aller Darstellungen.</p>",
     "cat": "kartografie",
     "panel": 0,
     "px": 0,
@@ -120,10 +120,10 @@
     "is": 2
   },
   {
-    "title": "Südhalbkugel",
+    "title": "Terra Australis — Der vermutete Südkontinent",
     "sub": "Panel 1 (ganz links), unten",
-    "text": "<p>Südhalbkugel mit dem vermuteten Kontinent Magellanica. Das Gegenstück zur Karte der Nordhalbkugeln auf der oberen Seite des Panels.</p>",
-    "cat": "kartografie",
+    "text": "<p>Am unteren Rand erstreckt sich 墨瓦蠟泥加 — Magellanica, der hypothetische Südkontinent <em>Terra Australis</em>. Seit der Antike postulierten Geograafen eine riesige Landmasse am Südpol, um die nördlichen Kontinente kosmografisch auszubalancieren. Ricci übernahm diesen Kontinent von europäischen Vorlagen, ohne ihn empirisch stützen zu können.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 383–385\">¹</sup></p><p>Die Karte zeigt damit eine Eigenheit der frühneuzeitlichen Kartografie: Leere Flächen wurden mit plausiblen Hypothesen gefüllt, nicht freigelassen. Cooks Expedition 1772–1775 widerlegte die Theorie einer riesigen bewohnbaren Südlandmasse endgültig — obwohl die Antarktis tatsächlich existiert, ist sie weit kleiner und vor allem unbewohnbar.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 133–134\">²</sup></p>",
+    "cat": "geo",
     "panel": 0,
     "px": 0,
     "py": 77,
@@ -137,7 +137,7 @@
   {
     "title": "Berechnungstabelle für den Schatten der Sonne",
     "sub": "Panel 2 (2. von links), unten rechts",
-    "text": "<span _d-id=\"169\" class=\"--l --r container-target\"><span _d-id=\"171\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Eine</span> <span _d-id=\"175\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Anleitung</span>, <span _d-id=\"179\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">wie</span> <span _d-id=\"183\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">man</span> <span _d-id=\"187\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">den</span> <span _d-id=\"191\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Schatten</span> <span _d-id=\"195\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">der</span> <span _d-id=\"199\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Sonne</span> <span _d-id=\"203\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">zur</span> <span _d-id=\"207\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Mittagszeit</span> <span _d-id=\"211\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">misst</span>, <span _d-id=\"215\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">um</span> <span _d-id=\"219\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">zu</span> <span _d-id=\"223\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">bestimmen</span>, <span _d-id=\"227\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">wie</span> <span _d-id=\"231\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">viele</span> <span _d-id=\"235\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Grad</span> <span _d-id=\"239\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ein</span> <span _d-id=\"243\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Ort</span> <span _d-id=\"247\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">vom</span> <span _d-id=\"251\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Äquator</span> <span _d-id=\"255\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">entfernt</span> <span _d-id=\"259\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ist</span></span>",
+    "text": "<p>Die Tabelle erklärt, wie man durch Messung des Mittagsschattens eines Gnomons die geografische Breite eines Ortes bestimmt: Je weiter vom Äquator entfernt, desto länger der Schatten um die Mittagszeit. Das Prinzip war in China nicht unbekannt — chinesische Astronomen nutzten den Gnomon (圭表) seit Jahrhunderten zur Kalenderberechnung.<sup class=\"fn\" data-ref=\"needham1959\" data-page=\"S. 284–296\">¹</sup></p><p>Ricci übersetzte diese vertraute Methode in das System des westlichen Breitengrades und verknüpfte damit eine bekannte Praxis mit einem neuen theoretischen Rahmen. Dass er überhaupt solche Anleitungen auf der Karte platzierte, zeigt seinen pädagogischen Ansatz: Die Karte sollte nicht nur zeigen, was existiert — sondern erklären, wie man es weiß.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 196–198\">²</sup></p>",
     "cat": "kartografie",
     "panel": 1,
     "px": 66,
@@ -150,9 +150,9 @@
     "is": 2
   },
   {
-    "title": "Sonne, Mond und Erde",
+    "title": "日月食圖 — Sonnen- und Mondfinsternis",
     "sub": "Panel 1 (ganz links), oben rechts",
-    "text": "<p>Die beiden kreisförmigen Diagramme zeigen die <strong>日月食圖</strong> – den Lauf von Sonne und Mond um die Erde. Das linke Diagramm illustriert Sonnenfinsternisse, das rechte Mondfinsternisse, jeweils mit der Erde im Zentrum.</p>",
+    "text": "<p>Die beiden kreisförmigen Diagramme heißen 日月食圖 — „Diagramme der Sonnen- und Mondfinsternis". Das linke zeigt, wie der Mondschatten auf die Erde fällt; das rechte, wie die Erde zwischen Sonne und Mond tritt. Beide Darstellungen basieren auf dem ptolemäischen geozentrischen Weltbild.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 193–195\">¹</sup></p><p>Astronomisches Wissen war Riccis wichtigstes Instrument für den Zugang zum Kaiserhof. Er hatte 1592 eine Sonnenfinsternis präziser vorhergesagt als alle Hofastronomen — ein entscheidender Durchbruch in seiner Karriere. Diese Diagramme machen das Wissen dahinter öffentlich sichtbar und liefern dem chinesischen Gelehrten eine Erklärung für Phänomene, die in der chinesischen Astronomie zwar beobachtet, aber nach anderen Modellen beschrieben wurden.<sup class=\"fn\" data-ref=\"brockey2007\" data-page=\"S. 44–50\">²</sup></p>",
     "cat": "astro",
     "panel": 0,
     "px": 74,
@@ -165,9 +165,9 @@
     "is": 2.5
   },
   {
-    "title": "Li Zhizao's Gedanken",
+    "title": "李之藻の序文 — Li Zhizaos Kommentar",
     "sub": "Panel 4 — mittig",
-    "text": "<span _ngcontent-ng-c3971351247=\"\" data-start-index=\"662\" class=\"ng-star-inserted\">Er preist die mathematische Genauigkeit der Längen- und Breitengrade und gesteht die Unzulänglichkeit früherer chinesischer Karten ein.</span>",
+    "text": "<p>Li Zhizaos Kommentar ist kein bloßes Geleitwort — er stellt eine aktive intellektuelle Auseinandersetzung dar. Li lobt die mathematische Präzision des Gradnetzes ausdrücklich und gesteht ein, dass frühere chinesische Karten diesem Maßstab nicht gerecht werden.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 333–338\">¹</sup> Diese Selbstkritik war im konfuzianischen Gelehrtenmilieu ungewöhnlich und zeigt, wie offen Li dem westlichen Wissen gegenüberstand.</p><p>Li war Jinshi-Absolvent — der höchste erreichbare akademische Grad im chinesischen Prüfungssystem. Sein Imprimatur verlieh der Karte Legitimität in den Augen der Gelehrtenwelt: Ohne ihn wäre Riccis Werk möglicherweise als Barbarenprodukt abgetan worden. Die Zusammenarbeit zwischen Li und Ricci war kein rein technisches Verhältnis, sondern ein intellektuelles Bündnis zweier Gelehrter aus unterschiedlichen Wissenstraditionen.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 333–336\">²</sup></p>",
     "cat": "text",
     "panel": 3,
     "px": 13,
@@ -180,9 +180,9 @@
     "is": 1.5
   },
   {
-    "title": "Kartografische Berechnungen",
-    "sub": "Panel 5 — Beschreibung hinzufügen",
-    "text": "<p>Tabelle zur Berechnung von Längen - und Breitengeraden</p>",
+    "title": "Kartografische Berechnungstabellen",
+    "sub": "Panel 5 — unterer Bereich",
+    "text": "<p>Die Tabellen enthalten Berechnungsgrundlagen für Längen- und Breitengrade — eine Art Bedienungsanleitung zur Karte, mit der man eigene Standorte im Gradnetz verorten konnte. Sie verknüpfen chinesische Entfernungsmaße (里, lǐ) mit dem europäischen Graduntersystem.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 196–200\">¹</sup></p><p>Diese Tabellen veranschaulichen Riccis übergeordnetes Ziel: Er wollte nicht nur eine Karte liefern, sondern ein Werkzeug zur eigenständigen Überprüfung. Ein chinesischer Gelehrter mit diesen Tabellen konnte die Angaben der Karte nachrechnen — Wissensvermittlung durch Methode, nicht durch Autorität.</p>",
     "cat": "kartografie",
     "panel": 4,
     "px": 4,
@@ -195,9 +195,9 @@
     "is": 1.5
   },
   {
-    "title": "Entfernung der neun Himmelsobjekte",
+    "title": "Entfernungen der neun Himmelskörper",
     "sub": "Panel 1 — links am Rand",
-    "text": "<p><span _d-id=\"1521\" class=\"--l --r container-target\">Hier werden die&nbsp;<span _d-id=\"1535\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Entfernungen</span> <span _d-id=\"1539\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">zwischen</span> <span _d-id=\"1543\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">der</span> <span _d-id=\"1547\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Erde</span> <span _d-id=\"1551\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">und</span> <span _d-id=\"1555\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">den</span> <span _d-id=\"1559\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">neun</span> <span _d-id=\"1563\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Himmelskörpern</span> (<span _d-id=\"1567\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Mond</span>, <span _d-id=\"1571\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Merkur</span>, <span _d-id=\"1575\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Venus</span>, <span _d-id=\"1579\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Sonne</span>, <span _d-id=\"1583\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Mars</span>, <span _d-id=\"1587\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Jupiter</span>, <span _d-id=\"1591\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Saturn</span>, <span _d-id=\"1595\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">achter</span> <span _d-id=\"1599\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Himmelskörper</span>, <span _d-id=\"1603\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">neunter</span> <span _d-id=\"1607\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Himmelskörper</span>) beschrieben.</span></p>",
+    "text": "<p>Die Tabelle listet die Abstände zwischen Erde und den neun Himmelskörpern des ptolemäischen Systems: Mond, Merkur, Venus, Sonne, Mars, Jupiter, Saturn sowie der Fixsternsphäre und dem Primum Mobile. Die Entfernungsangaben folgen ptolemäischen Schätzungen auf Basis konzentrischer Sphären.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 190–193\">¹</sup></p><p>Diese Angaben waren zu Riccis Zeit bereits durch Kopernikus und Tycho Brahe überholt. Ricci entschied sich dennoch für das geozentrische Modell — nicht aus Unkenntnis, sondern weil es sich besser in chinesische astronomische Kategorien übersetzen ließ und weil das heliozentrische System in Rom selbst noch kirchlich umstritten war.<sup class=\"fn\" data-ref=\"needham1959\" data-page=\"S. 437–446\">²</sup></p>",
     "cat": "astro",
     "panel": 0,
     "px": 0,
@@ -210,9 +210,9 @@
     "is": 1.5
   },
   {
-    "title": "Beschreibung einer Armillarssphäre",
+    "title": "Beschreibung der Armillarsphäre",
     "sub": "Panel 6 — unten rechts",
-    "text": "<p>Eine Armillarsphäre ist ein astronomisches Instrument, dass zur Messung von der Bewegung von Sonne und Mond verwendet wurde.</p>",
+    "text": "<p>Der Textblock beschreibt die Funktionsweise der abgebildeten Armillarsphäre (渾儀, húnyí). Die konzentrischen Metallringe repräsentieren jeweils einen Himmelskreis — Äquator, Ekliptik, Kolure und Wendekreise. In der Mitte sitzt die Erdkugel.<sup class=\"fn\" data-ref=\"delia1938\" data-page=\"S. 1–15\">¹</sup></p><p>Das Instrument war in China bekannt; die chinesische astronomische Tradition hatte eigene Armillarsphären entwickelt. Riccis Version nutzte die Vertrautheit mit dem Gerät, um das europäische sphärische Weltbild als technisch äquivalent — und damit anschlussfähig — zu präsentieren.</p>",
     "cat": "astro",
     "panel": 5,
     "px": 12,
@@ -226,8 +226,8 @@
   },
   {
     "title": "Beschreibung Nordeuropas",
-    "sub": "Panel 1 —  Oberer Teil",
-    "text": "<div data-renderer=\"lm\"><p class=\"my-2 [&amp;+p]:mt-4 [&amp;_strong:has(+br)]:inline-block [&amp;_strong:has(+br)]:pb-2\">Beschreibt christliche Länder mit Monarchie, dreistufiger Verwaltung (Religion, Weltliches, Militär), Reichtum an Ressourcen und Handel, sowie die Entfernung zu China</p></div><p></p>",
+    "sub": "Panel 1 — oberer Bereich",
+    "text": "<p>Der Textkasten beschreibt christliche Länder mit monarchischer Verfassung und dreistufiger Verwaltungsgliederung: religiöse, weltliche und militärische Ebene. Betont werden Reichtum an Ressourcen, Fernhandel und die Entfernung von China.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 369–372\">¹</sup></p><p>Ricci beschreibt Europa nicht als überlegene Zivilisation, sondern als einen von mehreren entwickelten Kulturräumen. Das ist für einen Missionar bemerkenswert — zumal sein eigentliches Ziel die Konversion Chinas war. Die Distanzangabe zu China dient der Lesererwartung: Am Kaiserhof wollte man wissen, wie weit die fremden Länder entfernt sind, nicht wie bedeutend sie sind.</p>",
     "cat": "text",
     "panel": 0,
     "px": 67,
@@ -242,7 +242,7 @@
   {
     "title": "Entstehungsgeschichte der Karte",
     "sub": "Panel 3 — mittig unten",
-    "text": "<p><span _ngcontent-ng-c3971351247=\"\" data-start-index=\"439\" class=\"ng-star-inserted\">Ricci erklärt die Entstehung der Karte ab 1584, betont die Kugelgestalt der Erde und beschreibt seine Reise von Europa nach China.</span></p>",
+    "text": "<p>Der Textblock auf Panel 3 schildert Riccis eigene Version der Kartengenese ab 1584. Er erklärt, wie er zunächst in Zhaoqing eine erste Weltkarte anfertigte, die auf derart große Begeisterung stieß, dass zahlreiche Kopien hergestellt wurden — bis schließlich der Wanli-Kaiser selbst eine offizielle Ausgabe in Auftrag gab.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 325–329\">¹</sup></p><p>Ricci beschreibt außerdem seine Reise aus Europa und betont die Kugelgestalt der Erde als Grundlage seiner Kartografie. Die Entstehungsnarrative ist dabei selbst eine Legitimationsstrategie: Er präsentiert sich als Weltreisenden mit Direkterfahrung, nicht als Stubengelehrten. Das Vorwissen über China und die Reiserouten aus Europa werden in der Erzählung so verknüpft, dass die Karte als Produkt persönlicher Verifikation erscheint.<sup class=\"fn\" data-ref=\"brockey2007\" data-page=\"S. 35–52\">²</sup></p>",
     "cat": "text",
     "panel": 2,
     "px": 65,
@@ -255,9 +255,9 @@
     "is": 1.5
   },
   {
-    "title": "Europa",
+    "title": "Europa — Asymmetrie der Detaildichte",
     "sub": "Panel 2 — Europa",
-    "text": "Die Darstellung Europas ist deutlich weniger Detailreich, als die Darstellung Chinas.",
+    "text": "<p>Europas Darstellung auf Riccis Karte ist deutlich weniger detailliert als die Chinas: Provinzgrenzen fehlen weitgehend, Ortsnamen sind unvollständig, und manche geografischen Proportionen sind ungenau. Das ist kein ideologischer Entscheid, sondern spiegelt den verfügbaren Quellenstand wider — für China standen aktuelle chinesische Karten zur Verfügung, für Europa nur Riccis Erinnerungen und mitgebrachte Druckwerke.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 130–131\">¹</sup></p><p>Diese Asymmetrie ist ein unbeabsichtigtes Zeugnis für den Wissenstransfer in beide Richtungen: Ricci brachte westliche Kartografietechnik nach China, nutzte aber chinesische Quellen für den Kern seiner Karte. Die Detaildichte folgt der Datendichte — und die war in China schlicht besser.</p>",
     "cat": "geo",
     "panel": 1,
     "px": 0,
@@ -271,8 +271,8 @@
   },
   {
     "title": "Krokodile so groß wie Schiffe",
-    "sub": "Panel 2 — Unten mittig",
-    "text": "<p>Riccis schreibt hier von Krokodilen, die so groß seien wie Schiffe. Dies stellt ein klares Beispiel für Elemente der Fantasie auf der Karte dar.</p>",
+    "sub": "Panel 2 — Unten mittig, Afrika",
+    "text": "<p>Ricci beschreibt in diesem Textkasten Krokodile, die so groß seien wie Schiffe. Die Beschreibung stammt aus portugiesischen und arabischen Reiseberichten, die seit dem 15. Jahrhundert in Europa kursierten und in kartografische Kompendien eingingen.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 374–376\">¹</sup></p><p>Afrikas Küstenlinie ist auf der Karte bemerkenswert akkurat — Portugal hatte den Kontinent 1498 umrundet. Die Genauigkeit hört genau dort auf, wo die Reiseberichte enden: an der Küste. Das Innere Afrikas bleibt spekulativ, bevölkert mit Phantasien. Die Karte zeigt ihr eigenes Wissensepigramm: Küsten kennt man, Kontinente erfindet man.</p>",
     "cat": "text",
     "panel": 1,
     "px": 25,
@@ -285,9 +285,9 @@
     "is": 1.5
   },
   {
-    "title": "Brasilien",
-    "sub": "Panel 6 — Rechts Mittig",
-    "text": "<p>Ricci's schreibt davon, dass die Menschen die dort leben keine Häuser bauen, sondern nur in Höhlen leben. Außerdem essen sie laut Ricci nur das Fleisch von Menschen. Ein weiteres Beispiel, wie Fantasie, als Realität dargstellt wird.</p>",
+    "title": "Brasilien — Der Kannibalismus-Topos",
+    "sub": "Panel 6 — rechts mittig",
+    "text": "<p>Der Textkasten über Brasilien enthält nach Giles' Übersetzung die Behauptung, die Bewohner bauten keine Häuser, lebten in Höhlen und ernährten sich von Menschenfleisch.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 380–381\">¹</sup> Diese Beschreibungen entstammen europäischen Berichten über die Tupi-Stämme, die seit den 1510er Jahren in Portugal und Spanien kursierten.</p><p>Der Kannibalismus-Topos war ein fester Bestandteil der europäischen Amerika-Wahrnehmung und fand so seinen Weg auf eine chinesische Weltkarte. Was Ricci hier weitergibt, ist nicht persönliche Beobachtung, sondern ein diskursives Erbe — fremde Völker an den Rändern der bekannten Welt werden mit denselben Vorwürfen belegt, die die europäische Tradition seit der Antike für das Andere bereithält.</p>",
     "cat": "text",
     "panel": 5,
     "px": 33,
@@ -300,9 +300,9 @@
     "is": 1.5
   },
   {
-    "title": "Fantastische Beschreibung von sibirischen Völkern",
-    "sub": "Panel 3 — Oben Mittig",
-    "text": "<p>\"<span _d-id=\"1064\" class=\"--l --r container-target\"><span _d-id=\"1070\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Die</span> <span _d-id=\"1074\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Menschen</span> <span _d-id=\"1078\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">hier</span> <span _d-id=\"1082\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sind</span> <span _d-id=\"1086\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">nachtaktiv</span>; <span _d-id=\"1090\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">tagsüber</span> <span _d-id=\"1094\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">halten</span> <span _d-id=\"1098\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sie</span> <span _d-id=\"1102\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sich</span> <span _d-id=\"1106\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">versteckt</span>, <span _d-id=\"1110\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">während</span> <span _d-id=\"1114\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sie</span> <span _d-id=\"1118\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">nachts</span> <span _d-id=\"1122\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">aktiv</span> <span _d-id=\"1126\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sind</span>. <span _d-id=\"1130\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Sie</span> <span _d-id=\"1134\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">bedecken</span> <span _d-id=\"1138\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ihren</span> <span _d-id=\"1142\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Körper</span> <span _d-id=\"1146\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">mit</span> <span _d-id=\"1150\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Hirschfellen</span>. <span _d-id=\"1154\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Sie</span> <span _d-id=\"1158\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">haben</span> <span _d-id=\"1162\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">dieselben</span> <span _d-id=\"1166\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Ohren</span>, <span _d-id=\"1170\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Augen</span> <span _d-id=\"1174\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">und</span> <span _d-id=\"1178\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Nasen</span> <span _d-id=\"1182\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">wie</span> <span _d-id=\"1186\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Menschen</span>, <span _d-id=\"1190\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">doch</span> <span _d-id=\"1194\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ihr</span> <span _d-id=\"1198\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Mund</span> <span _d-id=\"1202\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">befindet</span> <span _d-id=\"1206\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sich</span> <span _d-id=\"1210\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">oben</span> <span _d-id=\"1214\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">auf</span> <span _d-id=\"1218\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">dem</span> <span _d-id=\"1222\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Kopf</span>. <span _d-id=\"1226\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Sie</span> <span _d-id=\"1230\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ernähren</span> <span _d-id=\"1234\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">sich</span> <span _d-id=\"1238\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">von</span> <span _d-id=\"1242\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Hirschen</span> <span _d-id=\"1246\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">und</span> <span _d-id=\"1250\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Schlangen</span>.</span>\" Viele der Beschreibungen von Völkern in Gebieten, die wenig erkundet und erforscht waren, sind mit oft herabwürdigenden Beschreibungen beschriftet, die reine Fantasie sind und nichts mit der Realität zu tun haben.</p>",
+    "title": "Sibirische Völker — Die Tradition der Monstrous Races",
+    "sub": "Panel 3 — oben mittig",
+    "text": "<p>Der Textkasten beschreibt eine Volksgruppe in Sibirien als nachtaktiv, in Hirschfelle gekleidet und mit dem Mund oben auf dem Kopf. Diese und ähnliche Beschreibungen entstammen der mittelalterlichen europäischen Tradition der <em>Monstrous Races</em> — der mythischen Randvölker an den Grenzen der bekannten Welt, zurückgehend auf Plinius' <em>Naturalis Historia</em> und Solinus.<sup class=\"fn\" data-ref=\"giles1918\" data-page=\"S. 372–374\">¹</sup></p><p>Ricci übernahm diese Phantasien aus seinen europäischen Kompendienquellen und pflanzte sie in das chinesische geografische Weltbild ein. Je weiter eine Region vom Kartenzentrum entfernt ist, desto unzuverlässiger werden die Beschreibungen — ein strukturelles Merkmal der Karte, das die epistemische Hierarchie von Zentrum und Peripherie sichtbar macht.<sup class=\"fn\" data-ref=\"chen1939\" data-page=\"S. 344–350\">²</sup></p>",
     "cat": "text",
     "panel": 2,
     "px": 28,
@@ -316,8 +316,8 @@
   },
   {
     "title": "Entfernung der Sonne und Jahreszeiten",
-    "sub": "Panel 1 — Unten",
-    "text": "<p>Der Text und die Zeichnung beschreiben wie die Jahreszeiten, durch die Entfernung der Sonne zur Erde, beeinflusst werden.</p>",
+    "sub": "Panel 1 — unten rechts",
+    "text": "<p>Text und Diagramm erklären den Zusammenhang zwischen der Entfernung der Erde zur Sonne und dem Wechsel der Jahreszeiten. Tatsächlich ist nicht die Entfernung der ausschlaggebende Faktor, sondern die Neigung der Erdachse — ein Unterschied, den das Diagramm nur andeutet. Klimazonen und saisonale Sonnenhöhen werden jedoch korrekt beschrieben.<sup class=\"fn\" data-ref=\"livieratos2016\" data-page=\"S. 193–196\">¹</sup></p><p>Jahreszeiten und Klimazonen waren ein bekanntes Thema chinesischer Astronomie; Riccis Erklärung knüpfte an dieses Vorwissen an und ergänzte es um das westliche Konzept der Ekliptikschiefe. Das Diagramm ist damit ein weiteres Beispiel für Riccis pädagogische Strategie: Anschluss an Bekanntes suchen, dann erweitern.</p>",
     "cat": "astro",
     "panel": 0,
     "px": 58,
@@ -330,10 +330,10 @@
     "is": 1.5
   },
   {
-    "title": "Widmung des Handwerkers",
+    "title": "Widmung des Holzschneiders",
     "sub": "Panel 1 — links außerhalb der Karte",
-    "text": "<span _d-id=\"1812\" class=\"--l --r container-target\"><span _d-id=\"1815\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Gedruckt</span> <span _d-id=\"1819\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">von</span> <span _d-id=\"1823\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Zhang</span> <span _d-id=\"1827\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Wentao</span> <span _d-id=\"1831\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">aus</span> <span _d-id=\"1835\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Qiantang</span>&nbsp;<span _d-id=\"1843\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">im</span> <span _d-id=\"1847\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">ersten</span> <span _d-id=\"1851\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Herbstmonat</span> <span _d-id=\"1855\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">des</span> <span _d-id=\"1859\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Jahres</span> <span _d-id=\"1863\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Renyin</span> <span _d-id=\"1871\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">während</span> <span _d-id=\"1875\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">der</span> <span _d-id=\"1879\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Wanli</span>-<span _d-id=\"1883\" class=\"--l --r hover:bg-surface-info-muted hover:text-info-muted\">Ära</span>.</span>",
-    "cat": "text",
+    "text": "<p>Der Druckvermerk lautet: <em>„Gedruckt von Zhang Wentao aus Qiantang im ersten Herbstmonat des Jahres Renyin während der Wanli-Ära."</em> Das Jahr Renyin entspricht 1602. Zhang Wentao war der Handwerksmeister, der Riccis und Li Zhizaos Vorlage in die Holzdruckstöcke übertrug.<sup class=\"fn\" data-ref=\"szczesniak1954\" data-page=\"S. 127–128\">¹</sup></p><p>Der Vermerk ist einer der wenigen handwerklichen Signaturen auf dem Werk — ein Indiz dafür, welche Bedeutung dem Druck beigemessen wurde. Qiantang bezeichnet das Gebiet um das heutige Hangzhou, eine der bedeutendsten Druckereistädte der Ming-Zeit. Die Nennung von Ort und Datum folgt einer etablierten chinesischen Drucktradition der Autorisierung durch Provenienz.</p>",
+    "cat": "geo",
     "panel": 0,
     "px": 26,
     "py": 67,
