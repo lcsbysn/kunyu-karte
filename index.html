@@ -154,6 +154,31 @@ body.admin-mode .legend-row[contenteditable]:focus{
 #legend-admin-btns{display:none;margin-top:10px;gap:6px}
 body.admin-mode #legend-admin-btns{display:flex}
 
+/* ── Category Filter ── */
+body:not(.admin-mode) .legend-row{cursor:pointer;user-select:none;transition:opacity .2s,filter .2s}
+body:not(.admin-mode) .legend-row:hover{opacity:0.75}
+.legend-row.filtered{opacity:0.3 !important}
+.legend-row.filtered .legend-dot{filter:grayscale(1)}
+.legend-row.filtered .legend-label{text-decoration:line-through;text-decoration-color:rgba(255,255,255,0.25)}
+.spot.cat-filtered{opacity:0 !important;pointer-events:none !important;transition:opacity .3s}
+#legend-filter-hint{
+  font-size:9px;color:rgba(255,255,255,0.25);margin-bottom:8px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+#legend-filter-reset{
+  display:none;margin-top:8px;padding-top:8px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+#legend-filter-reset button{
+  width:100%;font-size:10px;padding:5px 8px;background:transparent;
+  border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);
+  border-radius:5px;cursor:pointer;font-family:inherit;transition:all .2s;
+}
+#legend-filter-reset button:hover{
+  background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55);
+  border-color:rgba(255,255,255,0.18);
+}
+
 /* Info Panel */
 #info-panel{
   position:fixed;top:0;right:0;
@@ -658,7 +683,9 @@ body.detail-open #footer{
 
 <div id="legend">
   <h3>Legende</h3>
+  <div id="legend-filter-hint">Klicken zum Filtern</div>
   <div id="legend-rows"></div>
+  <div id="legend-filter-reset"><button onclick="resetCatFilter()">Alle einblenden</button></div>
   <div id="legend-admin-btns">
     <button style="flex:1;padding:4px 8px;background:rgba(255,200,60,0.1);border:1px solid rgba(255,200,60,0.3);color:#ffd860;font-size:10px;border-radius:4px;cursor:pointer;font-family:inherit" onclick="legendAddRow()">+ Kategorie</button>
   </div>
@@ -867,6 +894,7 @@ const MODAL_CONTENT = {
 let viewer, meta;
 let activeSpotEl = null;
 let spotRects = [];
+let hiddenCats = new Set();
 
 async function init() {
   try {
@@ -1329,9 +1357,45 @@ function renderLegend() {
         saveLegend();
       };
       row.appendChild(del);
+    } else {
+      // Filter-Toggle
+      row.title = 'Klicken zum Ein-/Ausblenden';
+      row.addEventListener('click', () => toggleCatFilter(key));
+      if (hiddenCats.has(key)) row.classList.add('filtered');
     }
     container.appendChild(row);
   });
+}
+
+function toggleCatFilter(key) {
+  if (hiddenCats.has(key)) hiddenCats.delete(key);
+  else hiddenCats.add(key);
+  applyFilters();
+}
+
+function resetCatFilter() {
+  hiddenCats.clear();
+  applyFilters();
+}
+
+function applyFilters() {
+  // Spots ein-/ausblenden
+  document.querySelectorAll('.spot').forEach(el => {
+    const classes = Array.from(el.classList);
+    const catClass = classes.find(c => c.startsWith('cat-') && c !== 'cat-filtered');
+    const key = catClass ? catClass.replace('cat-', '') : null;
+    el.classList.toggle('cat-filtered', key !== null && hiddenCats.has(key));
+  });
+  // Legendenzeilen aktualisieren
+  document.querySelectorAll('#legend-rows .legend-row').forEach(row => {
+    row.classList.toggle('filtered', hiddenCats.has(row.dataset.catKey));
+  });
+  // Reset-Chip zeigen/verstecken
+  const reset = document.getElementById('legend-filter-reset');
+  if (reset) reset.style.display = hiddenCats.size > 0 ? 'block' : 'none';
+  // Hint anpassen
+  const hint = document.getElementById('legend-filter-hint');
+  if (hint) hint.style.display = document.body.classList.contains('admin-mode') ? 'none' : 'block';
 }
 
 function legendAddRow() {
