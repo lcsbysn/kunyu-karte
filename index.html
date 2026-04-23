@@ -290,6 +290,49 @@ body:not(.admin-mode) .legend-row:hover{opacity:0.75}
   background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);
   border-color:rgba(255,255,255,0.15);
 }
+/* ── Globe Overlay ── */
+#globe-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:#05040200;
+  display:none;align-items:center;justify-content:center;
+  animation:globeFadeIn .4s ease forwards;
+}
+#globe-overlay.open{display:flex}
+@keyframes globeFadeIn{from{background:#050402}to{background:#050402}}
+#globe-canvas{
+  position:absolute;inset:0;width:100% !important;height:100% !important;
+  cursor:grab;
+}
+#globe-canvas:active{cursor:grabbing}
+#globe-close{
+  position:absolute;top:16px;right:16px;z-index:301;
+  width:38px;height:38px;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);
+  border-radius:50%;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:inherit;
+}
+#globe-close:hover{background:rgba(255,255,255,0.14);color:#fff}
+#globe-loading{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  color:rgba(255,255,255,0.3);font-size:13px;font-weight:300;
+  letter-spacing:1px;pointer-events:none;
+}
+#globe-caption{
+  position:absolute;bottom:28px;left:50%;
+  transform:translateX(-50%);text-align:center;pointer-events:none;
+}
+#globe-caption-title{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:5px;font-weight:300}
+#globe-caption-text{
+  font-size:10px;color:rgba(255,255,255,0.2);
+  text-transform:uppercase;letter-spacing:0.8px;
+}
+#globe-hint{
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:rgba(255,200,60,0.35);text-transform:uppercase;
+  letter-spacing:1px;pointer-events:none;white-space:nowrap;
+}
+
 /* key-hint nudge when panel open */
 .detail-open #hint{opacity:0}
 
@@ -638,6 +681,10 @@ body.detail-open #footer{
   <div id="header-right">
     <button id="menu-btn" onclick="toggleMenu()">&#x2026;</button>
     <div id="menu-dropdown">
+      <button class="menu-item" onclick="openGlobe();toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        3D-Globus
+      </button>
       <button class="menu-item" onclick="startTour();toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Geführte Tour
@@ -742,6 +789,17 @@ body.detail-open #footer{
 <div class="admin-saved-toast" id="admin-toast">Gespeichert ✓</div>
 <div id="hz-float-tip"></div>
 <div id="fn-float-tip"></div>
+
+<div id="globe-overlay">
+  <canvas id="globe-canvas"></canvas>
+  <button id="globe-close" onclick="closeGlobe()" title="Schließen (ESC)">&#x2715;</button>
+  <div id="globe-loading">Lädt Textur&hellip;</div>
+  <div id="globe-hint">大明 liegt auf der Vorderseite &middot; Ziehen zum Drehen &middot; Scrollen zum Zoomen</div>
+  <div id="globe-caption">
+    <div id="globe-caption-title">坤輿萬國全圖 als Kugelprojektion (1602)</div>
+    <div id="globe-caption-text">Riccis Zylinderprojektion &mdash; China liegt im Bildzentrum &rarr; Vorderseite des Globus</div>
+  </div>
+</div>
 
 <div id="admin-login">
   <div id="admin-login-box">
@@ -2109,6 +2167,154 @@ openInfo = function(s, idx) {
   textEl.innerHTML = annotateHanzi(textEl.innerHTML);
   titleEl.innerHTML = annotateHanzi(titleEl.innerHTML);
 };
+
+// ── 3D Globe ─────────────────────────────────────────────────────────────────
+let _globe = {
+  initialized: false, animId: null,
+  renderer: null, scene: null, camera: null, mesh: null,
+  drag: { active: false, x: 0, y: 0 },
+  vel: { x: 0, y: 0 }
+};
+
+function openGlobe() {
+  document.getElementById('globe-overlay').classList.add('open');
+  document.getElementById('globe-loading').style.display = 'block';
+  if (!_globe.initialized) {
+    _loadThreeJS(_setupGlobe);
+  } else {
+    document.getElementById('globe-loading').style.display = 'none';
+    _globeAnimate();
+  }
+}
+
+function closeGlobe() {
+  document.getElementById('globe-overlay').classList.remove('open');
+  if (_globe.animId) { cancelAnimationFrame(_globe.animId); _globe.animId = null; }
+}
+
+function _loadThreeJS(cb) {
+  if (window.THREE) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function _setupGlobe() {
+  _globe.initialized = true;
+  const canvas = document.getElementById('globe-canvas');
+  const W = window.innerWidth, H = window.innerHeight;
+
+  // Renderer
+  _globe.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  _globe.renderer.setSize(W, H);
+  _globe.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  _globe.renderer.setClearColor(0x050402, 1);
+
+  // Scene & Camera
+  _globe.scene = new THREE.Scene();
+  _globe.camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+  _globe.camera.position.z = 2.6;
+
+  // Stars
+  const starPos = new Float32Array(3600);
+  for (let i = 0; i < starPos.length; i++) starPos[i] = (Math.random() - 0.5) * 80;
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+  _globe.scene.add(new THREE.Points(starGeo,
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, sizeAttenuation: true })));
+
+  // Lights
+  _globe.scene.add(new THREE.AmbientLight(0xfff8f0, 0.55));
+  const sun = new THREE.DirectionalLight(0xfff5e0, 1.1);
+  sun.position.set(4, 2, 5);
+  _globe.scene.add(sun);
+
+  // Globe mesh — loads async, hide loading indicator on texture ready
+  const loader = new THREE.TextureLoader();
+  loader.load('data/globe_texture.jpg', function(tex) {
+    tex.anisotropy = _globe.renderer.capabilities.getMaxAnisotropy();
+    const geo = new THREE.SphereGeometry(1, 72, 36);
+    const mat = new THREE.MeshPhongMaterial({
+      map: tex, shininess: 8,
+      specular: new THREE.Color(0x1a1a2e)
+    });
+    _globe.mesh = new THREE.Mesh(geo, mat);
+    // Slight tilt for a more natural globe look
+    _globe.mesh.rotation.x = -0.08;
+    _globe.scene.add(_globe.mesh);
+    document.getElementById('globe-loading').style.display = 'none';
+
+    // Subtle atmosphere shell
+    const atmosMat = new THREE.MeshPhongMaterial({
+      color: 0x3366aa, transparent: true, opacity: 0.07,
+      side: THREE.FrontSide, depthWrite: false
+    });
+    _globe.scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.018, 72, 36), atmosMat));
+  });
+
+  _setupGlobeDrag(canvas);
+  _globeAnimate();
+
+  // Resize handler
+  window.addEventListener('resize', () => {
+    if (!document.getElementById('globe-overlay').classList.contains('open')) return;
+    const W2 = window.innerWidth, H2 = window.innerHeight;
+    _globe.camera.aspect = W2 / H2;
+    _globe.camera.updateProjectionMatrix();
+    _globe.renderer.setSize(W2, H2);
+  });
+}
+
+function _setupGlobeDrag(canvas) {
+  const g = _globe;
+  const onDown = (x, y) => { g.drag.active = true; g.drag.x = x; g.drag.y = y; g.vel.x = 0; g.vel.y = 0; };
+  const onMove = (x, y) => {
+    if (!g.drag.active || !g.mesh) return;
+    const dx = x - g.drag.x, dy = y - g.drag.y;
+    g.vel.x = dy * 0.006; g.vel.y = dx * 0.006;
+    g.mesh.rotation.x += dy * 0.006;
+    g.mesh.rotation.y += dx * 0.006;
+    // Clamp vertical rotation so map doesn't flip upside-down
+    g.mesh.rotation.x = Math.max(-1.2, Math.min(1.2, g.mesh.rotation.x));
+    g.drag.x = x; g.drag.y = y;
+  };
+  const onUp = () => g.drag.active = false;
+
+  canvas.addEventListener('mousedown',  e => onDown(e.clientX, e.clientY));
+  canvas.addEventListener('mousemove',  e => onMove(e.clientX, e.clientY));
+  canvas.addEventListener('mouseup',    onUp);
+  canvas.addEventListener('mouseleave', onUp);
+
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) onDown(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  canvas.addEventListener('touchend', onUp);
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    g.camera.position.z = Math.max(1.25, Math.min(5, g.camera.position.z + e.deltaY * 0.003));
+  }, { passive: false });
+}
+
+function _globeAnimate() {
+  _globe.animId = requestAnimationFrame(_globeAnimate);
+  const g = _globe;
+  if (g.mesh && !g.drag.active) {
+    g.mesh.rotation.x += g.vel.x; g.vel.x *= 0.91;
+    g.mesh.rotation.y += g.vel.y; g.vel.y *= 0.91;
+    if (Math.abs(g.vel.y) < 0.0003) g.mesh.rotation.y += 0.0012; // idle auto-rotate
+  }
+  if (g.renderer && g.scene && g.camera) g.renderer.render(g.scene, g.camera);
+}
+
+// ESC closes globe too
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('globe-overlay').classList.contains('open')) closeGlobe();
+}, true);
 
 loadSavedData().catch(() => {}).then(() => init());
 </script>
