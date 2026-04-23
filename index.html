@@ -223,6 +223,51 @@ body.admin-mode #legend-admin-btns{display:flex}
   border-color:rgba(255,200,60,0.35);
 }
 
+/* ── Tour Controls ── */
+#tour-controls{
+  display:none;padding:0.75rem 1.8rem 1rem;
+  border-top:1px solid rgba(255,200,60,0.1);
+  flex-shrink:0;background:rgba(255,200,60,0.025);
+}
+#tour-bar{
+  height:2px;background:rgba(255,200,60,0.12);
+  border-radius:1px;margin-bottom:10px;overflow:hidden;
+}
+#tour-fill{
+  height:100%;background:linear-gradient(90deg,rgba(210,180,110,0.5),rgba(255,200,60,0.75));
+  border-radius:1px;transition:width .5s ease;
+}
+#tour-nav{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+#tour-btn-prev,#tour-btn-next{
+  flex-shrink:0;width:32px;height:32px;
+  background:rgba(255,200,60,0.08);border:1px solid rgba(255,200,60,0.2);
+  color:#ffd860;border-radius:6px;cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:inherit;
+}
+#tour-btn-prev:hover:not(:disabled),#tour-btn-next:hover:not(:disabled){
+  background:rgba(255,200,60,0.18);border-color:rgba(255,200,60,0.4);
+}
+#tour-btn-prev:disabled,#tour-btn-next:disabled{opacity:0.25;cursor:default}
+#tour-info{flex:1;text-align:center;line-height:1.4}
+#tour-phase{
+  display:block;font-size:9px;color:rgba(255,200,60,0.5);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px;
+}
+#tour-step{font-size:12px;color:rgba(255,200,60,0.85);font-weight:500}
+#tour-stop-btn{
+  width:100%;padding:7px;background:transparent;
+  border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);
+  font-size:11px;border-radius:6px;cursor:pointer;
+  transition:all .2s;font-family:inherit;
+}
+#tour-stop-btn:hover{
+  background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);
+  border-color:rgba(255,255,255,0.15);
+}
+/* key-hint nudge when panel open */
+.detail-open #hint{opacity:0}
+
 /* Responsive Info Panel — must come AFTER defaults to override */
 @media(max-width:900px){
   #info-panel{width:320px}
@@ -568,6 +613,11 @@ body.detail-open #footer{
   <div id="header-right">
     <button id="menu-btn" onclick="toggleMenu()">&#x2026;</button>
     <div id="menu-dropdown">
+      <button class="menu-item" onclick="startTour();toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Geführte Tour
+      </button>
+      <div class="menu-sep"></div>
       <button class="menu-item" onclick="toggleLegend();toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
         Legende ein/ausblenden
@@ -632,6 +682,18 @@ body.detail-open #footer{
   <div id="info-back">
     <button onclick="zoomOut()">Zur Gesamtansicht</button>
     <button id="admin-delete-spot" onclick="adminDeleteSpot()">🗑 Bereich löschen</button>
+  </div>
+  <div id="tour-controls">
+    <div id="tour-bar"><div id="tour-fill"></div></div>
+    <div id="tour-nav">
+      <button id="tour-btn-prev" onclick="tourPrev()" title="Zurück (←)">&#8592;</button>
+      <div id="tour-info">
+        <span id="tour-phase">Einstieg</span>
+        <span id="tour-step">1 / 23</span>
+      </div>
+      <button id="tour-btn-next" onclick="tourNext()" title="Weiter (→)">&#8594;</button>
+    </div>
+    <button id="tour-stop-btn" onclick="stopTour()">Tour beenden</button>
   </div>
 </div>
 
@@ -956,7 +1018,7 @@ function addSpotOverlays() {
     el.className = 'spot cat-' + s.cat + (s.shape === 'circle' ? ' circle' : '');
     el.dataset.spotIdx = i;
     el.innerHTML = '<div class="spot-num">' + (i + 1) + '</div>' +
-      '<div class="spot-tip">' + s.title.split('\u2014')[0].trim() + '</div>' +
+      '<div class="spot-tip">' + s.title.split(':')[0].trim() + '</div>' +
       '<div class="spot-resize nw" data-handle="nw"></div>' +
       '<div class="spot-resize ne" data-handle="ne"></div>' +
       '<div class="spot-resize sw" data-handle="sw"></div>' +
@@ -1092,6 +1154,7 @@ function closeInfo() {
   document.getElementById('info-panel').classList.remove('open');
   document.body.classList.remove('detail-open');
   if (activeSpotEl) { activeSpotEl.classList.remove('active'); activeSpotEl = null; }
+  if (tourActive) stopTour();
 }
 
 function zoomOut() {
@@ -1330,6 +1393,20 @@ document.addEventListener('keydown', (e) => {
     closeInfo(); closeModal();
   }
   if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); toggleAdmin(); }
+
+  // Arrow key navigation between spots
+  const panelOpen = document.getElementById('info-panel').classList.contains('open');
+  if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && panelOpen) {
+    e.preventDefault();
+    const dir = e.key === 'ArrowRight' ? 1 : -1;
+    if (tourActive) {
+      if (dir === 1) tourNext(); else tourPrev();
+    } else {
+      const next = (adminCurrentIdx + dir + SPOTS.length) % SPOTS.length;
+      const el = document.querySelector('[data-spot-idx="' + next + '"]');
+      if (el) spotClick(el, SPOTS[next], next, spotRects[next]);
+    }
+  }
 });
 
 // ── Admin Mode ──
@@ -1491,7 +1568,7 @@ function adminAutoSave() {
   const overlays = document.querySelectorAll('.spot');
   if (overlays[adminCurrentIdx]) {
     const tip = overlays[adminCurrentIdx].querySelector('.spot-tip');
-    if (tip) tip.textContent = s.title.split('\u2014')[0].trim();
+    if (tip) tip.textContent = s.title.split(':')[0].trim();
   }
 }
 
@@ -1895,6 +1972,64 @@ const FN_REFS = {
     hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
   }, true);
 })();
+
+// ── Guided Tour ──────────────────────────────────────────────────────────────
+// Sinozentrismus-Narrative: Einstieg → Strategie → Kern → Weltbild → Peripherie → Technik
+const TOUR_ORDER = [0, 22, 16, 3, 11, 4, 17, 6, 1, 2, 10, 15, 20, 8, 18, 19, 7, 13, 14, 5, 9, 12, 21];
+const TOUR_PHASES = [
+  { range: [0, 2],   label: 'Einstieg' },
+  { range: [3, 4],   label: 'Strategie' },
+  { range: [5, 7],   label: 'Sinozentrismus' },
+  { range: [8, 10],  label: 'Weltbild' },
+  { range: [11, 15], label: 'Peripherie' },
+  { range: [16, 22], label: 'Technik' },
+];
+
+let tourActive = false;
+let tourPos = 0;
+
+function tourPhaseLabel(pos) {
+  for (const p of TOUR_PHASES) if (pos >= p.range[0] && pos <= p.range[1]) return p.label;
+  return '';
+}
+
+function startTour() {
+  tourActive = true;
+  tourPos = 0;
+  document.getElementById('tour-controls').style.display = 'block';
+  document.getElementById('info-back').style.display = 'none';
+  tourGoTo(0);
+}
+
+function stopTour() {
+  tourActive = false;
+  document.getElementById('tour-controls').style.display = 'none';
+  document.getElementById('info-back').style.display = '';
+  // closeInfo already called by caller (ESC/X), so no double-close needed
+}
+
+function tourNext() {
+  if (tourPos < TOUR_ORDER.length - 1) { tourPos++; tourGoTo(tourPos); }
+}
+
+function tourPrev() {
+  if (tourPos > 0) { tourPos--; tourGoTo(tourPos); }
+}
+
+function tourGoTo(pos) {
+  const idx = TOUR_ORDER[pos];
+  const el = document.querySelector('[data-spot-idx="' + idx + '"]');
+  if (el) spotClick(el, SPOTS[idx], idx, spotRects[idx]);
+  // Update controls after panel opens
+  setTimeout(() => {
+    const total = TOUR_ORDER.length;
+    document.getElementById('tour-phase').textContent = tourPhaseLabel(pos);
+    document.getElementById('tour-step').textContent = (pos + 1) + '\u202f/\u202f' + total;
+    document.getElementById('tour-fill').style.width = ((pos + 1) / total * 100) + '%';
+    document.getElementById('tour-btn-prev').disabled = pos === 0;
+    document.getElementById('tour-btn-next').disabled = pos === total - 1;
+  }, 120);
+}
 
 // Hook into openInfo to annotate Chinese characters (patched into original function)
 const _origOpenInfo = openInfo;
